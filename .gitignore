@@ -3,3 +3,4 @@ composer.phar
 composer.lock
 .prettierrc
 .vscode
+.env

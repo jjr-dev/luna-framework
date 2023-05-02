@@ -3,8 +3,11 @@
 
     use \App\Http\Router;
     use \App\Utils\View;
+    use \App\Common\Environment;
 
-    define("URL", 'http://localhost/mvc-base');
+    Environment::load(__DIR__);
+
+    define("URL", getenv('URL'));
 
     View::init([
         'URL' => URL
