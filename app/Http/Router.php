@@ -3,6 +3,7 @@
     namespace App\Http;
     use \Closure;
     use \Exception;
+    use \ReflectionFunction;
 
     class Router {
         private $url;
@@ -30,6 +31,13 @@
                 }
             }
 
+            $params['variables'] = [];
+            $patternVariable = '/{(.*?)}/';
+            if(preg_match_all($patternVariable, $route, $matches)) {
+                $route = preg_replace($patternVariable, '(.*?)', $route);
+                $params['variables'] = $matches[1];
+            }
+
             $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
             $this->routes[$patternRoute][$method] = $params;
         }
@@ -42,31 +50,42 @@
 
         private function getRoute() {
             $uri = $this->getUri();
-            
             $httpMethod = $this->request->getHttpMethod();
 
             foreach($this->routes as $patternRoute => $methods) {
-                if(preg_match($patternRoute, $uri)) {
-                    if($methods[$httpMethod]) {
+                if(preg_match($patternRoute, $uri, $matches)) {
+                    if(isset($methods[$httpMethod])) {
+                        unset($matches[0]);
+                        $keys = $methods[$httpMethod]['variables'];
+                        $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
+                        $methods[$httpMethod]['variables']['request'] = $this->request;
+
                         return $methods[$httpMethod];
                     }
 
                     throw new Exception("Método não permitido", 405);
                 }
-
-                throw new Exception("URL não encontrada", 404);
             }
+
+            throw new Exception("URL não encontrada", 404);
         }
 
         public function run() {
             try {
                 $route = $this->getRoute();
-                echo '<pre>';
-                echo '$route: ' , print_r(var_export($route), true); 
-                echo 'in ' . __FILE__ . ' on line ' . __LINE__; 
-                echo '</pre>';
                 
-                
+                if(!isset($route['controller'])) {
+                    throw new Exception("URL não pôde ser processada", 500);
+                }
+
+                $args = [];
+                $reflection = new ReflectionFunction($route['controller']);
+                foreach($reflection->getParameters() as $parameter) {
+                    $name = $parameter->getName();
+
+                    $args[$name] = $route['variables'][$name] ?? '';
+                }
+                return call_user_func_array($route['controller'], $args);
             } catch(Exception $e) {
                 return new Response($e->getCode(), $e->getMessage());
             }

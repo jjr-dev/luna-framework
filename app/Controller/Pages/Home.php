@@ -10,7 +10,6 @@
             
             $content = View::render('pages/home', [
                 'name' => $obOrganization->name,
-                'description' => $obOrganization->description
             ]);
 
             return parent::getPage("JJrDev - Home", $content);
