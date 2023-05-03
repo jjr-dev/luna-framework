@@ -5,7 +5,7 @@
     use \App\Models\Organization;
 
     class Home extends Page {
-        public static function getHome() {
+        public static function getHome($request) {
             $obOrganization = new Organization();
             
             $content = View::render('pages/home', [
