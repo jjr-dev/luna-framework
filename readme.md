@@ -6,11 +6,13 @@ Para criar uma nova rota de página acesse o arquivo `routes/page.php` e adicion
 
 ```php
 $obRouter->get('/about', [
-    function() {
-        return new Response(200, Pages\About::getAbout());
+    function($request) {
+        return new Response(200, Pages\About::getAbout($request));
     }
 ]);
 ```
+
+> A variável `$request` permite o uso de funções para obter os parâmetros e outros itens da requisição
 
 Rotas com variáveis devem ser como o exemplo:
 
@@ -18,6 +20,56 @@ Rotas com variáveis devem ser como o exemplo:
 $obRouter->get('/pagina/{id}/{action}', [
     function($id, $action) {
         return new Response(200, 'Página ' . $id . ' - ' . $action);
+    }
+]);
+```
+
+## Middlewares
+
+Os middlewares devem ser criados em `app/Http/Middleware`, por exemplo:
+
+```php
+<?php
+    namespace App\Http\Middleware;
+
+    class Maintenance {
+        public function handle($request, $next) {
+            if(getenv('MAINTENANCE') == 'true')
+                throw new \Exception("Página em manutenção.", 200);
+
+            return $next($request);
+        }
+    }
+```
+
+A função `handle()` é obrigatória uma vez que será executada e deve retornar sempre com `$next($request)`.
+
+Após criar o middleware é necessário lista-lo em `middlewares.php` para criar um apelido, por exemplo:
+
+```php
+<?php
+    use \App\Http\Middleware\Queue AS MiddlewareQueue;
+
+    MiddlewareQueue::setMap([
+        'maintenance' => \App\Http\Middleware\Maintenance::class
+    ]);
+
+    MiddlewareQueue::setDefault([
+        'maintenance'
+    ]);
+```
+
+> Os middlewares definidos no array de `setDefault()` são executados em todas as rotas, para adicionar basta citar o apelido utilizado no `setMap()` conforme exemplo.
+
+Exemplo de uso de middleware em rota:
+
+```php
+$obRouter->get('/', [
+    'middlewares' => [
+        'middleware_name'
+    ],
+    function($request) {
+        return new Response(200, Pages\Home::getHome($request));
     }
 ]);
 ```
