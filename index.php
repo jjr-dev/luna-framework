@@ -1,5 +1,6 @@
 <?php
     require __DIR__ . '/vendor/autoload.php';
+    require __DIR__ . '/middlewares.php';
 
     use \App\Http\Router;
     use \App\Utils\View;
