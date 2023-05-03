@@ -17,8 +17,12 @@
         }
     ]);
 
-    $obRouter->get('/pagina/{idPagina}/{acao}', [
-        function($idPagina, $acao) {
-            return new Response(200, 'Página ' . $idPagina . ' - ' . $acao);
+    $obRouter->get('/pagina/{id}/{action}', [
+        'middlewares' => [
+            'maintenance'
+        ],
+        function($request) {
+            $pathParams =  $request->getPathParams();
+            return new Response(200, 'Página ' . $pathParams['id'] . ' - ' . $pathParams['action']);
         }
     ]);

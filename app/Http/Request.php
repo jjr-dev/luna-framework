@@ -5,6 +5,7 @@
     class Request {
         private $httpMethod;
         private $uri;
+        private $pathParams = [];
         private $queryParams = [];
         private $postVars = [];
         private $headers = [];
@@ -35,5 +36,13 @@
 
         public function getPostVars() {
             return $this->postVars;
+        }
+
+        public function getPathParams() {
+            return $this->pathParams;
+        }
+
+        public function addPathParams($key, $value) {
+            $this->pathParams[$key] = $value;
         }
     }

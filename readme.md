@@ -18,8 +18,19 @@ Rotas com variáveis devem ser como o exemplo:
 
 ```php
 $obRouter->get('/pagina/{id}/{action}', [
-    function($id, $action) {
+    function($request, $id, $action) {
         return new Response(200, 'Página ' . $id . ' - ' . $action);
+    }
+]);
+```
+
+Também é possível obter os parâmetros de URL pela variável `$request` com a função `getPathParams()`, por exemplo:
+
+```php
+$obRouter->get('/pagina/{id}/{action}', [
+    function($request) {
+        $pathParams = $request->getPathParams();
+        return new Response(200, 'Página ' . $pathParams['id'] . ' - ' . $pathParams['action']);
     }
 ]);
 ```
@@ -86,7 +97,7 @@ Os controllers devem ser criados em `app/Controllers/Pages`, por exemplo:
     use \App\Models\Organization;
 
     class About extends Page {
-        public static function getAbout() {
+        public static function getAbout($request) {
             $organization = Organization::find(1);
 
             $content = View::render('pages/about', [

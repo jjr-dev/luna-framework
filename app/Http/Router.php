@@ -88,8 +88,13 @@
                 $reflection = new ReflectionFunction($route['controller']);
                 foreach($reflection->getParameters() as $parameter) {
                     $name = $parameter->getName();
-
                     $args[$name] = $route['variables'][$name] ?? '';
+                }
+
+                $variables = $route['variables'];
+                foreach($variables as $key => $value) {
+                    if(!in_array($key, ['request']))
+                        $this->request->addPathParams($key, $value);
                 }
 
                 return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request);
