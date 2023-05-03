@@ -48,7 +48,10 @@
         private function getUri() {
             $uri = $this->request->getUri();
             $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
-            return end($xUri);
+            $uri = end($xUri);
+            $uri = preg_split("/[?#]/", $uri);
+
+            return $uri[0];
         }
 
         private function getRoute() {
