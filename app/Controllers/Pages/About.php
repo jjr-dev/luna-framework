@@ -1,16 +1,16 @@
 <?php
-    namespace App\Controller\Pages;
+    namespace App\Controllers\Pages;
 
     use \App\Utils\View;
-    use \App\Model\Entity\Organization;
+    use \App\Models\Organization;
 
     class About extends Page {
         public static function getAbout() {
-            $obOrganization = new Organization();
+            $organization = Organization::find(1);
 
             $content = View::render('pages/about', [
-                'name' => $obOrganization->name,
-                'description' => $obOrganization->description
+                'name' => $organization->name,
+                'description' => $organization->description
             ]);
 
             return parent::getPage("JJrDev - Sobre", $content);
