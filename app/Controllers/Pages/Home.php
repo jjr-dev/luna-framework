@@ -2,7 +2,7 @@
     namespace App\Controller\Pages;
 
     use \App\Utils\View;
-    use \App\Model\Entity\Organization;
+    use \App\Models\Organization;
 
     class Home extends Page {
         public static function getHome() {

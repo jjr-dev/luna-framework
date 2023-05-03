@@ -24,33 +24,87 @@ $obRouter->get('/pagina/{id}/{action}', [
 
 ## Criar controller
 
-Os controllers devem ser criados em `app/Controller/Pages`, por exemplo:
+Os controllers devem ser criados em `app/Controllers/Pages`, por exemplo:
 
 ```php
 <?php
-    namespace App\Controller\Pages;
+    namespace App\Controllers\Pages;
 
     use \App\Utils\View;
-    use \App\Model\Entity\Organization;
+    use \App\Models\Organization;
 
-    class Home extends Page {
-        public static function getHome() {
-            // Uso da model carregada
-            $obOrganization = new Organization();
+    class About extends Page {
+        public static function getAbout() {
+            $organization = Organization::find(1);
 
-            // Renderização com variáveis
-            $content = View::render('pages/home', [
-                'name' => $obOrganization->name,
+            $content = View::render('pages/about', [
+                'name' => $organization->name,
+                'description' => $organization->description
             ]);
 
-            return parent::getPage("JJrDev - Home", $content);
+            return parent::getPage("JJrDev - Sobre", $content);
         }
     }
 ```
 
+## Conexão com banco de dados
+
+As credenciais de conexão ao banco de dados devem ser informadas no arquivo `.env`. A conexão com o banco é realizada com `PDO` com o **ORM** `Illuminate/Eloquent`.
+
 ## Criar model
 
-As models devem ser criadas em `App/Model/Entity` com a conexão com o banco e regra de negócio, podendo ser utilizada pelo controller.
+As models devem ser criadas em `App/Models`, por exemplo:
+
+```php
+<?php
+
+    namespace App\Models;
+
+    use \App\Db\Database;
+    use \Illuminate\Database\Eloquent\Model;
+
+    class Organization extends Model {
+        protected $table = 'tb_organization';
+        protected $primaryKey = 'cd_organization';
+
+        private $aliases = [
+            'id'    => 'cd_organization',
+            'name'  => 'nm_organization',
+            'description' => 'ds_organization'
+        ];
+
+        public function __get($key) {
+            return $this->getAttribute($this->aliases[$key] ?? $key);
+        }
+    }
+```
+
+É utilizado o **ORM** `Illuminate/Eloquent` para conexão, sendo assim as configurações do model seguem a documentação do mesmo.
+
+> **Dicas caso não siga a convenção definida pelo Eloquent:**
+> Defina a variável `$table` para nomear a tabela
+> Defina a variável `$primaryKey` para definir a chave primaria da tabela
+> Defina a variável `$aliases` para definir os alias das colunas
+>
+> - Isso auxilia para utilizar $tb->id ao invés de $tb->cd_column
+> - A função `__get()` do exemplo é necessária caso utilize o `$aliases`.
+
+### Exemplo de uso da model:
+
+```php
+<?php
+    use \App\Models\Organization;
+
+    class About extends Page {
+        public static function getAbout() {
+            $organization = Organization::find(1);
+            var_dump($organization->id);
+            var_dump($organization->name);
+        }
+    }
+```
+
+[Documentação do Eloquent](https://laravel-docs-pt-br.readthedocs.io/en/latest/eloquent/)
 
 ## Criar views
 

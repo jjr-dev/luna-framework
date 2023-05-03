@@ -4,8 +4,11 @@
     use \App\Http\Router;
     use \App\Utils\View;
     use \App\Common\Environment;
-
+    use \App\Db\Database;
+    
     Environment::load(__DIR__);
+
+    Database::boot();
 
     define("URL", getenv('URL'));
 

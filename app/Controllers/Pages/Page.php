@@ -1,5 +1,5 @@
 <?php
-    namespace App\Controller\Pages;
+    namespace App\Controllers\Pages;
 
     use \App\Utils\View;
 

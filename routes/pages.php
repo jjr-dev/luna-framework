@@ -1,6 +1,6 @@
 <?php
     use \App\Http\Response;
-    use \App\Controller\Pages;
+    use \App\Controllers\Pages;
 
     $obRouter->get('/', [
         function() {
