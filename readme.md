@@ -42,9 +42,10 @@ As rotas podem ser definidas para personalizar o retorno de erros, por exemplo:
 
 ```php
 <?php
-    namespace App\Controllers\Pages;
+    namespace App\Controllers\Errors;
 
     use \App\Utils\View;
+    use \App\Controllers\Pages\Page;
 
     class PageNotFound extends Page {
         public static function getPage($request) {
@@ -58,9 +59,11 @@ As rotas podem ser definidas para personalizar o retorno de erros, por exemplo:
 **Rota:**
 
 ```php
+use \App\Controllers\Errors;
+
 $router->error(404, [
     function($request) {
-        return new Response(404, Pages\PageNotFound::getPage($request));
+        return new Response(404, Errors\PageNotFound::getPage($request));
     }
 ]);
 ```

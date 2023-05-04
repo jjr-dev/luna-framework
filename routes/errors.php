@@ -1,6 +1,6 @@
 <?php
     use \App\Http\Response;
-    use \App\Controllers\Pages;
+    use \App\Controllers\Errors;
 
     $router->error('default', [
         function($request) {
@@ -10,13 +10,13 @@
 
     $router->error(404, [
         function($request) {
-            return new Response(404, Pages\PageNotFound::getPage($request));
+            return new Response(404, Errors\PageNotFound::getPage($request));
         }
     ]);
 
     $router->error(405, [
         function($request) {
-            return new Response(405, Pages\RequestMethodNotAllowed::getPage($request));
+            return new Response(405, Errors\RequestMethodNotAllowed::getPage($request));
         }
     ]);
 
