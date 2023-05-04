@@ -14,7 +14,8 @@
     define("URL", getenv('URL'));
 
     View::init([
-        'URL' => URL
+        'URL'    => URL,
+        'PUBLIC' => URL . '/public'
     ]);
 
     $router = new Router(URL);
