@@ -20,5 +20,6 @@
     $router = new Router(URL);
 
     include __DIR__ . '/routes/pages.php';
+    include __DIR__ . '/routes/errors.php';
 
     $router->run()->sendResponse();

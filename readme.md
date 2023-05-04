@@ -35,6 +35,49 @@ $router->get('/pagina/{id}/{action}', [
 ]);
 ```
 
+### Rota de erro
+
+As rotas podem ser definidas para personalizar o retorno de erros, por exemplo:
+**Controller:**
+
+```php
+<?php
+    namespace App\Controllers\Pages;
+
+    use \App\Utils\View;
+
+    class PageNotFound extends Page {
+        public static function getPage($request) {
+            $content = View::render('errors/404');
+
+            return parent::getPage("Erro 404", $content);
+        }
+    }
+```
+
+**Rota:**
+
+```php
+$router->error(404, [
+    function($request) {
+        return new Response(404, Pages\PageNotFound::getPage($request));
+    }
+]);
+```
+
+É possível também definir uma rota `default`, ela será utilizada caso o erro não tenha uma rota específica:
+
+```php
+$router->error('default', [
+    function($request) {
+        return new Response(500, 'Erro geral');
+    }
+]);
+```
+
+> Caso a rota de erro não seja configurada irá retornar automaticamente o erro em STRING.
+> Erros comuns: 404 -> Rota não encontrada | 405 -> Método não permitido
+
 ## Middlewares
 
 Os middlewares devem ser criados em `app/Http/Middleware`, por exemplo:
