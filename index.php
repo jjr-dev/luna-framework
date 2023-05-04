@@ -21,6 +21,5 @@
 
     include __DIR__ . '/routes/pages.php';
     include __DIR__ . '/routes/errors.php';
-    include __DIR__ . '/routes/api.php';
 
     $router->run()->sendResponse();
