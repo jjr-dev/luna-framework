@@ -82,10 +82,12 @@
                         $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
                         $methods[$httpMethod]['variables']['request'] = $this->request;
 
+                        if(!isset($methods[$httpMethod]['controller']))
+                            return $this->getError(500, 'URL ' . $uri . ' não pôde ser processada');
+
                         return $methods[$httpMethod];
                     }
 
-                    $errorCode = 405;
                     return $this->getError(405, 'Método ' . $httpMethod . ' não permitido');
                 }
             }
@@ -93,7 +95,7 @@
             return $this->getError(404, 'URL ' . $uri . ' não encontrada');
         }
 
-        private function getError($errorCode) {
+        private function getError($errorCode, $msg) {
             if(!isset($this->errors[$errorCode]))
                 throw new Exception($msg, $errorCode);
         
@@ -104,10 +106,6 @@
         public function run() {
             try {
                 $route = $this->getRoute();
-
-                if(!isset($route['controller'])) {
-                    throw new Exception("URL não pôde ser processada", 500);
-                }
 
                 $args = [];
                 $reflection = new ReflectionFunction($route['controller']);
