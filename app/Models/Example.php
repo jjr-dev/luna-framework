@@ -5,14 +5,13 @@
     use \App\Db\Database;
     use \Illuminate\Database\Eloquent\Model;
 
-    class Organization extends Model {
-        protected $table = 'tb_organization';
-        protected $primaryKey = 'cd_organization';
+    class Example extends Model {
+        protected $table = 'tb_example';
+        protected $primaryKey = 'cd_example';
 
         private $aliases = [
-            'id'    => 'cd_organization',
-            'name'  => 'nm_organization',
-            'description' => 'ds_organization'
+            'id'    => 'cd_example',
+            'name'  => 'nm_example'
         ];
 
         public function __get($key) {
