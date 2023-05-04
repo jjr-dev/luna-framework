@@ -10,6 +10,7 @@
         private $url;
         private $prefix;
         private $routes = [];
+        private $errors = [];
         private $request;
 
         public function __construct($url) {            
@@ -23,14 +24,29 @@
             $this->prefix = $parseUrl['path'] ?? '';
         }
 
-        private function addRoute($method, $route, $params) {
-            foreach($params as $key=>$value) {
+        private function toggleClosureToController($params) {
+            foreach($params as $key => $value) {
                 if($value instanceof Closure) {
                     $params['controller'] = $value;
                     unset($params[$key]);
                     continue;
                 }
             }
+
+            return $params;
+        }
+
+        private function addError($error, $params) {
+            $params = $this->toggleClosureToController($params);
+
+            $params['middlewares'] = $params['middlewares'] ?? [];
+            $params['variables'] = [];
+
+            $this->errors[$error] = $params;
+        }
+
+        private function addRoute($method, $route, $params) {
+            $params = $this->toggleClosureToController($params);
 
             $params['middlewares'] = $params['middlewares'] ?? [];
 
@@ -69,17 +85,26 @@
                         return $methods[$httpMethod];
                     }
 
-                    throw new Exception("Método não permitido", 405);
+                    $errorCode = 405;
+                    return $this->getError(405, 'Método ' . $httpMethod . ' não permitido');
                 }
             }
 
-            throw new Exception("URL não encontrada", 404);
+            return $this->getError(404, 'URL ' . $uri . ' não encontrada');
+        }
+
+        private function getError($errorCode) {
+            if(!isset($this->errors[$errorCode]))
+                throw new Exception($msg, $errorCode);
+        
+            $this->errors[$errorCode]['variables']['request'] = $this->request;
+            return $this->errors[$errorCode];
         }
 
         public function run() {
             try {
                 $route = $this->getRoute();
-                
+
                 if(!isset($route['controller'])) {
                     throw new Exception("URL não pôde ser processada", 500);
                 }
@@ -117,5 +142,9 @@
 
         public function delete($route, $params = []) {
             return $this->addRoute("DELETE", $route, $params);
+        }
+
+        public function error($error, $params = []) {
+            return $this->addError($error, $params);
         }
     }

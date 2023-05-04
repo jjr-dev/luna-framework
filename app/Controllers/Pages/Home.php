@@ -7,7 +7,7 @@
     class Home extends Page {
         public static function getHome($request) {
             $obOrganization = new Organization();
-            
+
             $content = View::render('pages/home', [
                 'name' => $obOrganization->name,
             ]);
