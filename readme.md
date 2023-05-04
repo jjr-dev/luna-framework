@@ -2,14 +2,18 @@
 
 ## Criar rota
 
-Para criar uma nova rota de página acesse o arquivo `routes/page.php` e adicione como o exemplo:
+As rotas podem ser criadas no diretório `routes`, Por exemplo:
 
 ```php
-$router->get('/about', [
-    function($request) {
-        return new Response(200, Pages\About::getAbout($request));
-    }
-]);
+<?php
+    use \App\Http\Response;
+    use \App\Controllers\Pages;
+
+    $router->get('/about', [
+        function($request) {
+            return new Response(200, Pages\About::getAbout($request));
+        }
+    ]);
 ```
 
 > A variável `$request` permite o uso de funções para obter os parâmetros e outros itens da requisição
