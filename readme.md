@@ -249,4 +249,9 @@ As páginas de views que serão executadas pelos controllers devem ser criadas e
 
 ## Variáveis padrões
 
-Para definir variáveis padrões em todas as views adicione-as no arquivo `index.php` em `View::init([])`
+Para definir variáveis padrões em todas as views adicione-as no arquivo `index.php` em `View::init([])`.
+
+A variável {{PUBLIC}} e {{URL}} são definidas por padrão e podem ser acessadas nas views.
+
+> Os arquivos de assets como `css`, `js` ou mídias devem ser armazenados em `/public` e acessados por {{PUBLIC}}, por exemplo:
+> Arquivo armazenado em `/public/assets/img` com nome `php-logo.png` pode ser usado com `{{PUBLIC}}/assets/img/php-logo.png`.
