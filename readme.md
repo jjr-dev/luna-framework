@@ -5,7 +5,7 @@
 Para criar uma nova rota de página acesse o arquivo `routes/page.php` e adicione como o exemplo:
 
 ```php
-$obRouter->get('/about', [
+$router->get('/about', [
     function($request) {
         return new Response(200, Pages\About::getAbout($request));
     }
@@ -17,7 +17,7 @@ $obRouter->get('/about', [
 Rotas com variáveis devem ser como o exemplo:
 
 ```php
-$obRouter->get('/pagina/{id}/{action}', [
+$router->get('/pagina/{id}/{action}', [
     function($request, $id, $action) {
         return new Response(200, 'Página ' . $id . ' - ' . $action);
     }
@@ -27,7 +27,7 @@ $obRouter->get('/pagina/{id}/{action}', [
 Também é possível obter os parâmetros de URL pela variável `$request` com a função `getPathParams()`, por exemplo:
 
 ```php
-$obRouter->get('/pagina/{id}/{action}', [
+$router->get('/pagina/{id}/{action}', [
     function($request) {
         $pathParams = $request->getPathParams();
         return new Response(200, 'Página ' . $pathParams['id'] . ' - ' . $pathParams['action']);
@@ -75,7 +75,7 @@ Após criar o middleware é necessário lista-lo em `middlewares.php` para criar
 Exemplo de uso de middleware em rota:
 
 ```php
-$obRouter->get('/', [
+$router->get('/', [
     'middlewares' => [
         'middleware_name'
     ],
@@ -87,10 +87,12 @@ $obRouter->get('/', [
 
 ## Criar controller
 
-Os controllers devem ser criados em `app/Controllers/Pages`, por exemplo:
+Os controllers devem ser criados em `app/Controllers`, por exemplo:
 
 ```php
 <?php
+    # Criado em app/Controllers/Pages
+
     namespace App\Controllers\Pages;
 
     use \App\Utils\View;
@@ -171,7 +173,7 @@ As models devem ser criadas em `App/Models`, por exemplo:
 
 ## Criar views
 
-As páginas de views que serão executadas pelos controllers devem ser criadas em `resources/view/pages` em formato `.html`, o uso de variáveis é utilizado por `{{var}}` e deve ser enviado pelo controller conforme exemplo acima.
+As páginas de views que serão executadas pelos controllers devem ser criadas em `resources/view` em formato `.html`, o uso de variáveis é utilizado por `{{var}}` e deve ser enviado pelo controller conforme exemplo acima.
 
 ## Variáveis padrões
 
