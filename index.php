@@ -19,7 +19,12 @@
 
     $router = new Router(URL);
 
-    include __DIR__ . '/routes/pages.php';
-    include __DIR__ . '/routes/errors.php';
+    $routerDir = dir(__DIR__ . '/routes');
+    while(($file = $routerDir->read()) !== false) {
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if($ext === 'php')
+            include __DIR__ . '/routes/' . $file;
+    }
+    $routerDir->close();
 
     $router->run()->sendResponse();
