@@ -2,7 +2,7 @@
     use \App\Http\Response;
     use \App\Controllers\Pages;
 
-    $obRouter->get('/', [
+    $router->get('/', [
         'middlewares' => [
             'maintenance'
         ],
@@ -11,13 +11,13 @@
         }
     ]);
 
-    $obRouter->get('/about', [
+    $router->get('/about', [
         function() {
             return new Response(200, Pages\About::getAbout());
         }
     ]);
 
-    $obRouter->get('/pagina/{id}/{action}', [
+    $router->get('/pagina/{id}/{action}', [
         'middlewares' => [
             'maintenance'
         ],
