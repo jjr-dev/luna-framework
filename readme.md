@@ -39,6 +39,18 @@ $router->get('/pagina/{id}/{action}', [
 ]);
 ```
 
+### Rota de API
+
+As rotas podem responder em JSON, por exemplo:
+
+```php
+$router->get('/api', [
+    function($request) {
+        return new Response(200, ["data" => "sucesso"], 'application/json');
+    }
+]);
+```
+
 ### Rota de erro
 
 As rotas podem ser definidas para personalizar o retorno de erros, por exemplo:
@@ -201,8 +213,8 @@ As models devem ser criadas em `App/Models`, por exemplo:
 > Defina a variável `$primaryKey` para definir a chave primaria da tabela
 > Defina a variável `$aliases` para definir os alias das colunas
 >
-> - Isso auxilia para utilizar $tb->id ao invés de $tb->cd_column
-> - A função `__get()` do exemplo é necessária caso utilize o `$aliases`.
+> -   Isso auxilia para utilizar $tb->id ao invés de $tb->cd_column
+> -   A função `__get()` do exemplo é necessária caso utilize o `$aliases`.
 
 ### Exemplo de uso da model:
 
