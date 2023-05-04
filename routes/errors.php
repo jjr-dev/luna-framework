@@ -2,6 +2,12 @@
     use \App\Http\Response;
     use \App\Controllers\Pages;
 
+    $router->error('default', [
+        function($request) {
+            return new Response(500, 'Erro geral');
+        }
+    ]);
+
     $router->error(404, [
         function($request) {
             return new Response(404, Pages\PageNotFound::getPage($request));

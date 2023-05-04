@@ -65,6 +65,16 @@ $router->error(404, [
 ]);
 ```
 
+É possível também definir uma rota `default`, ela será utilizada caso o erro não tenha uma rota específica:
+
+```php
+$router->error('default', [
+    function($request) {
+        return new Response(500, 'Erro geral');
+    }
+]);
+```
+
 > Caso a rota de erro não seja configurada irá retornar automaticamente o erro em STRING.
 > Erros comuns: 404 -> Rota não encontrada | 405 -> Método não permitido
 

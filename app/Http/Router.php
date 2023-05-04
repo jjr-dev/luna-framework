@@ -96,11 +96,13 @@
         }
 
         private function getError($errorCode, $msg) {
-            if(!isset($this->errors[$errorCode]))
+            if(!isset($this->errors[$errorCode]) && !isset($this->errors['default']))
                 throw new Exception($msg, $errorCode);
-        
-            $this->errors[$errorCode]['variables']['request'] = $this->request;
-            return $this->errors[$errorCode];
+
+            $error = $this->errors[isset($this->errors[$errorCode]) ? $errorCode : 'default'];        
+
+            $error['variables']['request'] = $this->request;
+            return $error;
         }
 
         public function run() {
