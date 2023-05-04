@@ -3,8 +3,8 @@
     namespace App\Http;
 
     class Response {
-        private $httpCode = 200;
         private $headers = [];
+        private $httpCode;
         private $contentType;
         private $content;
 
