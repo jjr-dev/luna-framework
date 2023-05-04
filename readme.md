@@ -215,6 +215,16 @@ As models devem ser criadas em `App/Models`, por exemplo:
     }
 ```
 
+O tratamento de erros pode ser realizado com `try catch`, por exemplo:
+
+```php
+try {
+    $organization = Organization::find(1);
+} catch(\Illuminate\Database\QueryException $e) {
+    var_dump($e->errorInfo);
+}
+```
+
 [Documentação do Eloquent](https://laravel-docs-pt-br.readthedocs.io/en/latest/eloquent/)
 
 ## Criar views
