@@ -67,7 +67,7 @@
             $uri = end($xUri);
             $uri = preg_split("/[?#]/", $uri)[0];
 
-            return $uri == "/" ? $uri : trim($uri, '/') ;
+            return $uri == "/" ? $uri : rtrim($uri, '/') ;
         }
 
         private function getRoute() {
