@@ -13,6 +13,7 @@
         private $errors = [];
         private $request;
         private $response;
+        private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS'];
 
         public function __construct($url) {            
             $this->request = new Request();
@@ -102,6 +103,7 @@
             if(!isset($this->errors[$errorCode]) && !isset($this->errors['default']))
                 throw new Exception($msg, $errorCode);
 
+
             $error = $this->errors[isset($this->errors[$errorCode]) ? $errorCode : 'default'];        
 
             $error['variables']['request'] = $this->request;
@@ -144,11 +146,40 @@
             return $this->addRoute("PUT", $route, $params);
         }
 
+        public function patch($route, $params = []) {
+            return $this->addRoute("PATCH", $route, $params);
+        }
+
+        public function options($route, $params = []) {
+            return $this->addRoute("OPTIONS", $route, $params);
+        }
+
         public function delete($route, $params = []) {
             return $this->addRoute("DELETE", $route, $params);
         }
 
         public function error($error, $params = []) {
             return $this->addError($error, $params);
+        }
+
+        public function match($methods, $route, $params = []) {
+            foreach($methods as $method) {
+                $method = strtoupper($method);
+                
+                if(!in_array($method, $this->methods))
+                    continue;
+                    
+                $this->addRoute($method, $route, $params);
+            };
+
+            return;
+        }
+
+        public function any($route, $params = []) {
+            foreach($this->methods as $method) {
+                $this->addRoute($method, $route, $params);
+            };
+
+            return;
         }
     }
