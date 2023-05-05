@@ -8,9 +8,15 @@
         private $contentType;
         private $content;
 
-        public function send($httpCode, $content, $contentType = 'text/html') {
+        public function send($httpCode, $content, $contentType = false) {
             $this->httpCode = $httpCode;
             $this->content  = $content;
+
+            if(!$contentType) {
+                $defaultContentType = getenv(DEFAULT_CONTENT_TYPE);
+                $contentType = $defaultContentType ? $defaultContentType : 'text/html';
+            }
+
             $this->setContentType($contentType);
 
             return $this;
