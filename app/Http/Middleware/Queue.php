@@ -24,7 +24,7 @@
             self::$default = $default;
         }
 
-        public function next($request) {
+        public function next($request, $response) {
             if(empty($this->middlewares)) return call_user_func_array($this->controller, $this->controllerArgs);
 
             $middleware = array_shift($this->middlewares);
@@ -34,9 +34,9 @@
                 
             $queue = $this;
             $next  = function($request) use($queue) {
-                return $queue->next($request);
+                return $queue->next($request, $response);
             };
 
-            return (new self::$map[$middleware])->handle($request, $next);
+            return (new self::$map[$middleware])->handle($request, $response, $next);
         }
     }
