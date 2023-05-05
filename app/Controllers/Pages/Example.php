@@ -4,8 +4,10 @@
     use \App\Utils\View;
 
     class Example extends Page {
-        public static function getPage($request) {
+        public static function getPage($req, $res) {
             $content = View::render('pages/example');
-            return parent::getPage("MVC Example", $content);
+            $content = parent::getPage("MVC Example", $content);
+            
+            return $res->send(200, $content);
         }
     }

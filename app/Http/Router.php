@@ -12,9 +12,11 @@
         private $routes = [];
         private $errors = [];
         private $request;
+        private $response;
 
         public function __construct($url) {            
             $this->request = new Request();
+            $this->response = new Response();
             $this->url     = $url;
             $this->setPrefix();
         }
@@ -80,7 +82,8 @@
                         unset($matches[0]);
                         $keys = $methods[$httpMethod]['variables'];
                         $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
-                        $methods[$httpMethod]['variables']['request'] = $this->request;
+                        $methods[$httpMethod]['variables']['request']  = $this->request;
+                        $methods[$httpMethod]['variables']['response'] = $this->response;
 
                         if(!isset($methods[$httpMethod]['controller']))
                             return $this->getError(500, 'URL ' . $uri . ' não pôde ser processada');
@@ -102,6 +105,7 @@
             $error = $this->errors[isset($this->errors[$errorCode]) ? $errorCode : 'default'];        
 
             $error['variables']['request'] = $this->request;
+            $error['variables']['response'] = $this->response;
             return $error;
         }
 
@@ -122,9 +126,9 @@
                         $this->request->addPathParams($key, $value);
                 }
 
-                return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request);
+                return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request, $this->response);
             } catch(Exception $e) {
-                return new Response($e->getCode(), $e->getMessage());
+                return (new Response())->send($e->getCode(), $e->getMessage());
             }
         }
 

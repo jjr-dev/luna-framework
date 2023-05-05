@@ -10,8 +10,8 @@ As rotas podem ser criadas no diretório `routes`, Por exemplo:
     use \App\Controllers\Pages;
 
     $router->get('/about', [
-        function($request) {
-            return new Response(200, Pages\About::getAbout($request));
+        function($request, $response) {
+            return Pages\About::getAbout($request, $response);
         }
     ]);
 ```
@@ -23,7 +23,7 @@ Rotas com variáveis devem ser como o exemplo:
 ```php
 $router->get('/pagina/{id}/{action}', [
     function($request, $id, $action) {
-        return new Response(200, 'Página ' . $id . ' - ' . $action);
+        return (new Response())->send(200, 'Página ' . $id . ' - ' . $action);
     }
 ]);
 ```
@@ -34,7 +34,7 @@ Também é possível obter os parâmetros de URL pela variável `$request` com a
 $router->get('/pagina/{id}/{action}', [
     function($request) {
         $pathParams = $request->getPathParams();
-        return new Response(200, 'Página ' . $pathParams['id'] . ' - ' . $pathParams['action']);
+        return (new Response())->send(200, 'Página ' . $pathParams['id'] . ' - ' . $pathParams['action']);
     }
 ]);
 ```
@@ -46,7 +46,7 @@ As rotas podem responder em JSON, por exemplo:
 ```php
 $router->get('/api', [
     function($request) {
-        return new Response(200, ["data" => "sucesso"], 'application/json');
+        return (new Response())->send(200, ["data" => "sucesso"], 'application/json');
     }
 ]);
 ```
@@ -79,7 +79,7 @@ use \App\Controllers\Errors;
 
 $router->error(404, [
     function($request) {
-        return new Response(404, Errors\PageNotFound::getPage($request));
+        return Errors\PageNotFound::getPage($request, $response);
     }
 ]);
 ```
@@ -89,7 +89,7 @@ $router->error(404, [
 ```php
 $router->error('default', [
     function($request) {
-        return new Response(500, 'Erro geral');
+        return (new Response())->send(500, 'Erro geral');
     }
 ]);
 ```
@@ -106,11 +106,11 @@ Os middlewares devem ser criados em `app/Http/Middleware`, por exemplo:
     namespace App\Http\Middleware;
 
     class Maintenance {
-        public function handle($request, $next) {
+        public function handle($req, $res, $next) {
             if(getenv('MAINTENANCE') == 'true')
-                throw new \Exception("Página em manutenção.", 200);
+                return $res->send(200, "Em manutenção");
 
-            return $next($request);
+            return $next($req, $res);
         }
     }
 ```
@@ -141,8 +141,8 @@ $router->get('/', [
     'middlewares' => [
         'middleware_name'
     ],
-    function($request) {
-        return new Response(200, Pages\Home::getHome($request));
+    function($request, $response) {
+        return Pages\Home::getHome($request, $response);
     }
 ]);
 ```
@@ -161,15 +161,22 @@ Os controllers devem ser criados em `app/Controllers`, por exemplo:
     use \App\Models\Organization;
 
     class About extends Page {
-        public static function getAbout($request) {
-            $organization = Organization::find(1);
+        public static function getAbout($req, $res) {
+            $queryParams = $req->getQueryParams();
+
+            $organization = Organization::find($queryParams['id']);
+
+            if(!$organization)
+                return $res->send(404, "Não encontrado");
 
             $content = View::render('pages/about', [
                 'name' => $organization->name,
                 'description' => $organization->description
             ]);
 
-            return parent::getPage("JJrDev - Sobre", $content);
+            $content = parent::getPage("JJrDev - Sobre", $content);
+
+            return $res->send(200, $content);
         }
     }
 ```

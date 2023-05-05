@@ -5,8 +5,9 @@
     use \App\Controllers\Pages\Page;
 
     class PageNotFound extends Page {
-        public static function getPage($request) {
+        public static function getPage($req, $res) {
             $content = View::render('errors/404');
-            return parent::getPage("Erro 404", $content);
+            $content = parent::getPage("MVC Example - 404", $content);
+            return $res->send(404, $content);
         }
     }

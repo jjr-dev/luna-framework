@@ -3,7 +3,7 @@
     use \App\Controllers\Pages;
 
     $router->get('/', [
-        function($request) {
-            return new Response(200, Pages\Example::getPage($request));
+        function($request, $response) {
+            return Pages\Example::getPage($request, $response);
         }
     ]);

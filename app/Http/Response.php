@@ -8,10 +8,12 @@
         private $contentType;
         private $content;
 
-        public function __construct($httpCode, $content, $contentType = 'text/html') {
+        public function send($httpCode, $content, $contentType = 'text/html') {
             $this->httpCode = $httpCode;
             $this->content  = $content;
             $this->setContentType($contentType);
+
+            return $this;
         }
 
         public function setContentType($contentType) {
