@@ -1,5 +1,4 @@
 <?php
-    use \App\Http\Response;
     use \App\Controllers\Errors;
 
     $router->error(404, [

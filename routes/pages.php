@@ -1,5 +1,4 @@
 <?php
-    use \App\Http\Response;
     use \App\Controllers\Pages;
 
     $router->get('/', [
