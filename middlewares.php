@@ -1,6 +1,6 @@
 <?php
-    use \App\Http\Middleware\Queue AS MiddlewareQueue;
+    use \App\Http\Middleware;
 
-    MiddlewareQueue::setMap([]);
+    Middleware::setMap([]);
 
-    MiddlewareQueue::setDefault([]);
+    Middleware::setDefault([]);

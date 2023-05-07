@@ -4,7 +4,7 @@
     use \Closure;
     use \Exception;
     use \ReflectionFunction;
-    use \App\Http\Middleware\Queue AS MiddlewareQueue;
+    use \App\Http\Middleware;
 
     class Router {
         private $url;
@@ -128,7 +128,7 @@
                         $this->request->addPathParams($key, $value);
                 }
 
-                return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request, $this->response);
+                return (new Middleware($route['middlewares'], $route['controller'], $args))->next($this->request, $this->response);
             } catch(Exception $e) {
                 return (new Response())->send($e->getCode(), $e->getMessage());
             }

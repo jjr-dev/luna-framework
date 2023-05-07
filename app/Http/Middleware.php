@@ -1,8 +1,8 @@
 <?php
 
-    namespace App\Http\Middleware;
+    namespace App\Http;
 
-    class Queue {
+    class Middleware {
         private static $map = [];
         private static $default = [];
 
