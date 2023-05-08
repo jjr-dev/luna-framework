@@ -149,6 +149,11 @@
             }
         }
 
+        public function redirect($route) {
+            header('location: ' . $this->url . $route);
+            exit;
+        }
+
         public function get($route, $params = []) {
             return $this->addRoute("GET", $route, $params);
         }
