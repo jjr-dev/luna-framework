@@ -54,10 +54,16 @@
             $params['middlewares'] = $params['middlewares'] ?? [];
 
             $params['variables'] = [];
-            $patternVariable = '/{([^\/.]*)}/';
-            if(preg_match_all($patternVariable, $route, $matches)) {
-                $route = preg_replace($patternVariable, '([^/.]*)', $route);
-                $params['variables'] = $matches[1];
+
+            $patterns = [
+                '/{([^\/.]*)\?}/' => '?([^/.]*)?',
+                '/{([^\/.]*)}/'   => '([^/.]*)'
+            ];
+            foreach($patterns as $pattern => $replace) {
+                if(preg_match_all($pattern, $route, $matches)) {
+                    $route = preg_replace($pattern, $replace, $route);
+                    $params['variables'] = array_merge($matches[1], $params['variables']);
+                }
             }
 
             $route = rtrim($route, '/');
@@ -134,12 +140,18 @@
                 $reflection = new ReflectionFunction($route['controller']);
                 foreach($reflection->getParameters() as $parameter) {
                     $name = $parameter->getName();
-                    $args[$name] = $route['variables'][$name] ?? '';
+
+                    if(isset($route['variables'][$name])) {
+                        $value = $route['variables'][$name];
+
+                        $args[$name] = !empty($value) ? $value : null;
+                    }
+                        
                 }
 
                 $variables = $route['variables'];
                 foreach($variables as $key => $value) {
-                    if(!in_array($key, ['request']))
+                    if(!in_array($key, ['request', 'response']))
                         $this->request->addPathParams($key, $value);
                 }
 
