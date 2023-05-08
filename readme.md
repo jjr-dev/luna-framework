@@ -2,11 +2,12 @@
 
 Luna é um framework desenvolvido em PHP com inspirações em outros frameworks como Laravel, CodeIgniter e o Express do JavaScript voltado para desenvolvimento Web com recursos como:
 
--   Mapeamento de rotas;
--   Banco de dados em ORM (Illuminate/Eloquent);
--   Fila de middlewares;
--   Praticidade, segurança e agilidade;
--   Hospedagem simples.
+- Mapeamento de rotas;
+- Banco de dados em ORM (Illuminate/Eloquent);
+- Fila de middlewares;
+- Praticidade, segurança e agilidade;
+- Hospedagem simplificada;
+- Armazenamento em cache.
 
 ## Aprendendo Luna
 
