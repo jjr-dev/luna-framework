@@ -16,7 +16,7 @@
         private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS'];
 
         public function __construct($url) {            
-            $this->request = new Request();
+            $this->request = new Request($this);
             $this->response = new Response();
             $this->url     = $url;
             $this->setPrefix();
@@ -54,23 +54,38 @@
             $params['middlewares'] = $params['middlewares'] ?? [];
 
             $params['variables'] = [];
-            $patternVariable = '/{(.*?)}/';
+            $patternVariable = '/{([^\/.]*)}/';
             if(preg_match_all($patternVariable, $route, $matches)) {
-                $route = preg_replace($patternVariable, '(.*?)', $route);
+                $route = preg_replace($patternVariable, '([^/.]*)', $route);
                 $params['variables'] = $matches[1];
+            }
+
+            $route = rtrim($route, '/');
+
+            if(isset($params['cache']) && $params['cache']) {
+                if(gettype($params['cache']) === 'boolean')
+                    $params['cache'] = getenv('CACHE_TIME');
+                    
+                if(!in_array('cache', $params['middlewares']))
+                    $params['middlewares'][] = 'cache';
             }
 
             $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
             $this->routes[$patternRoute][$method] = $params;
         }
 
-        private function getUri() {
+        public function getUri() {
             $uri = $this->request->getUri();
             $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
             $uri = end($xUri);
             $uri = preg_split("/[?#]/", $uri)[0];
 
-            return $uri == "/" ? $uri : rtrim($uri, '/') ;
+            return rtrim($uri, '/');
+        }
+
+        public function getCacheTime() {
+            $route = $this->getRoute();
+            return $route['cache'];
         }
 
         private function getRoute() {
