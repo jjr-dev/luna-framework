@@ -10,7 +10,8 @@
         private $postVars = [];
         private $headers = [];
 
-        public function __construct() {
+        public function __construct($router) {
+            $this->router       = $router;
             $this->queryParams  = $_GET ?? [];
             $this->postVars     = $_POST ?? [];
             $this->headers      = getallheaders();
@@ -27,7 +28,7 @@
         }
 
         public function getHeaders() {
-            return $this->header;
+            return $this->headers;
         }
 
         public function getQueryParams() {
@@ -40,6 +41,10 @@
 
         public function getPathParams() {
             return $this->pathParams;
+        }
+
+        public function getRouter() {
+            return $this->router;
         }
 
         public function addPathParams($key, $value) {

@@ -3,6 +3,10 @@
     namespace App\Http;
 
     class Middleware {
+        private static $core = [
+            'cache' => \App\Middlewares\Cache::class
+        ];
+        
         private static $map = [];
         private static $default = [];
 
@@ -17,7 +21,7 @@
         }
 
         public static function setMap($map) {
-            self::$map = $map;
+            self::$map = array_merge(self::$core, $map);
         }
 
         public static function setDefault($default) {
