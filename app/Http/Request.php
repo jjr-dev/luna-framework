@@ -15,9 +15,15 @@
             $this->queryParams  = $_GET ?? [];
             $this->headers      = getallheaders();
             $this->httpMethod   = $_SERVER['REQUEST_METHOD'] ?? '';
-            $this->uri          = $_SERVER['REQUEST_URI'] ?? '';
 
+            $this->setUri();
             $this->setPostVars();
+        }
+        
+        private function setUri() {
+            $uri = $_SERVER['REQUEST_URI'] ?? '';
+            $xUri = preg_split("/[?#]/", $uri);
+            $this->uri = $xUri[0];
         }
 
         private function setPostVars() {
