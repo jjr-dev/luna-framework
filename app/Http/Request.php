@@ -58,6 +58,6 @@
         }
 
         public function addPathParams($key, $value) {
-            $this->pathParams[$key] = $value;
+            $this->pathParams[$key] = empty($value) ? null : $value;
         }
     }
