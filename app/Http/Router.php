@@ -54,11 +54,13 @@
             $params['middlewares'] = $params['middlewares'] ?? [];
 
             $params['variables'] = [];
-            $patternVariable = '/{(.*?)}/';
+            $patternVariable = '/{([^\/.]*)}/';
             if(preg_match_all($patternVariable, $route, $matches)) {
-                $route = preg_replace($patternVariable, '(.*?)', $route);
+                $route = preg_replace($patternVariable, '([^/.]*)', $route);
                 $params['variables'] = $matches[1];
             }
+
+            $route = rtrim($route, '/');
 
             $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
             $this->routes[$patternRoute][$method] = $params;
@@ -70,7 +72,7 @@
             $uri = end($xUri);
             $uri = preg_split("/[?#]/", $uri)[0];
 
-            return $uri == "/" ? $uri : rtrim($uri, '/') ;
+            return rtrim($uri, '/');
         }
 
         private function getRoute() {
