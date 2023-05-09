@@ -47,7 +47,7 @@
             ];
         }
 
-        public function render($request, $components = [], $pages = 3) {
+        public function render($request, $components = [], $pages = 2) {
             $data = $this->get();
 
             $uri = $request->getUri();
