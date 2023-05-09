@@ -1,7 +1,7 @@
 <?php
     namespace App\Utils;
 
-    class Component extends View {
+    class Component {
         private static function getContentComponent($component) {
             $file = __DIR__ . '/../../resources/components/' . $component . '.html';
             return file_exists($file) ? file_get_contents($file) : '';
@@ -9,6 +9,6 @@
         
         public static function render($component, $vars = []) {
             $contentComponent = self::getContentComponent($component);
-            return parent::render(false, $vars, $contentComponent);
+            return View::render(false, $vars, $contentComponent);
         }
     }
