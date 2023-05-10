@@ -3,10 +3,10 @@
 
     use \App\Utils\View;
 
-    class Example extends Page {
+    class Home extends Page {
         public static function getPage($req, $res) {
-            $content = View::render('pages/example');
-            $content = parent::getPage("MVC Example", $content);
+            $content = View::render('pages/home');
+            $content = parent::getPage("Luna- Framework MVC", $content);
             
             return $res->send(200, $content);
         }
