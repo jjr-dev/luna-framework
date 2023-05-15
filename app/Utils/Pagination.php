@@ -51,7 +51,7 @@
             $data = $this->get();
 
             $uri = $request->getUri();
-            $queryParams = $request->getQueryParams();
+            $queryParams = $request->query();
             $href = $uri . '?' . http_build_query(array_merge($queryParams, ['page' => '']));
 
             $defaultComponents = ['number', 'first', 'last', 'previous', 'next', 'ellipsis'];

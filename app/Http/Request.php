@@ -35,6 +35,14 @@
             $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
         }
 
+        public function addPathParams($key, $value) {
+            $this->pathParams[$key] = empty($value) ? null : $value;
+        }
+
+        public function getRouter() {
+            return $this->router;
+        }
+
         public function getHttpMethod() {
             return $this->httpMethod;
         }
@@ -43,27 +51,23 @@
             return $this->uri;
         }
 
-        public function getHeaders() {
-            return $this->headers;
+        public function header($key = false) {
+            if(!$key) return $this->headers;
+            return isset($this->headers[$key]) ? $this->headers[$key] : null;
         }
 
-        public function getQueryParams() {
-            return $this->queryParams;
+        public function body($key = false) {
+            if(!$key) return $this->postVars;
+            return isset($this->postVars[$key]) ? $this->postVars[$key] : null;
         }
 
-        public function getPostVars() {
-            return $this->postVars;
+        public function query($key = false) {
+            if(!$key) return $this->queryParams;
+            return isset($this->queryParams[$key]) ? $this->queryParams[$key] : null;
         }
 
-        public function getPathParams() {
-            return $this->pathParams;
-        }
-
-        public function getRouter() {
-            return $this->router;
-        }
-
-        public function addPathParams($key, $value) {
-            $this->pathParams[$key] = empty($value) ? null : $value;
+        public function param($key = false) {
+            if(!$key) return $this->pathParams;
+            return isset($this->pathParams[$key]) ? $this->pathParams[$key] : null;
         }
     }
