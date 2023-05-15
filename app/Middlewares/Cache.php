@@ -9,9 +9,9 @@
             if($request->getHttpMethod() != "GET") return false;
 
             if(getenv('ALLOW_NO_CACHE_HEADER') == 'true') {
-                $headers = $request->getHeaders();
+                $cacheControl = $request->header('Cache-Control');
 
-                if(isset($headers['Cache-Control']) && $headers['Cache-Control'] == 'no-cache') return false;
+                if($cacheControl && $cacheControl == 'no-cache') return false;
             }
 
             return true;
@@ -20,7 +20,7 @@
         private function getHash($request) {
             $uri = $request->getRouter()->getUri();
 
-            $queryParams = $request->getQueryParams();
+            $queryParams = $request->query();
             $uri .= !empty($queryParams) ? '?' . http_build_query($queryParams) : '';
             
             return rtrim('route-' . preg_replace('/[^0-9a-zA-Z]/', '-', ltrim($uri, '/')), '-');
