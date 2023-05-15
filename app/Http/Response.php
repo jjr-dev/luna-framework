@@ -40,14 +40,13 @@
 
         public function sendResponse() {
             $this->sendHeaders();
-            
-            switch($this->contentType) {
-                case 'text/html':
-                    echo $this->content;
+
+            if(in_array($this->contentType, ['html', 'text/html'])) {
+                echo $this->content;
                     exit;
-                case 'application/json':
-                    echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                    exit;
+            } elseif(in_array($this->contentType, ['json', 'application/json'])) {
+                echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                exit;
             }
         }
     }
