@@ -2,7 +2,7 @@
     namespace App\Controllers\Pages;
 
     use \App\Utils\View;
-    use \App\Seo\Seo;
+    use \App\Utils\Seo;
 
     class Home extends Page {
         public static function getPage($req, $res) {
