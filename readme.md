@@ -9,7 +9,8 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
 - Hospedagem simplificada;
 - Armazenamento em cache;
 - Componentização;
-- Paginação.
+- Paginação;
+- Search Engine Optimization (SEO).
 
 ## Aprendendo Luna
 
