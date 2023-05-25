@@ -2,7 +2,7 @@
     namespace App\Controllers\Errors;
 
     use \App\Utils\View;
-    use \App\Seo\Seo;
+    use \App\Utils\Seo;
     use \App\Controllers\Pages\Page;
 
     class PageNotFound extends Page {
