@@ -4,7 +4,7 @@
     class View {
         protected static $vars = [];
 
-        public static function init($vars = []) {
+        public static function define($vars = []) {
             self::$vars = $vars;
         }
 
