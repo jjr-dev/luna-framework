@@ -13,7 +13,7 @@
             $this->content  = $content;
 
             if(!$contentType) {
-                $defaultContentType = getenv(DEFAULT_CONTENT_TYPE);
+                $defaultContentType = getenv('DEFAULT_CONTENT_TYPE');
                 $contentType = $defaultContentType ? $defaultContentType : 'text/html';
             }
 
@@ -33,17 +33,16 @@
 
         private function sendHeaders() {
             http_response_code($this->httpCode);
-            foreach($headers as $key => $value) {
+            foreach($this->headers as $key => $value) {
                 header($key . ': ' . $value);
             }
         }
 
         public function sendResponse() {
             $this->sendHeaders();
-
             if(in_array($this->contentType, ['html', 'text/html'])) {
                 echo $this->content;
-                    exit;
+                exit;
             } elseif(in_array($this->contentType, ['json', 'application/json'])) {
                 echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 exit;
