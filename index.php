@@ -1,31 +1,12 @@
 <?php
     require __DIR__ . '/vendor/autoload.php';
     require __DIR__ . '/middlewares.php';
+    require __DIR__ . '/define.php';
 
     use \App\Http\Router;
-    use \App\Utils\View;
-    use \App\Utils\Flash;
-    use \App\Common\Environment;
     use \App\Db\Database;
     
-    Environment::load(__DIR__);
-
     Database::boot();
-
-    define("URL", getenv('URL'));
-
-    View::init([
-        'URL'    => URL,
-        'PUBLIC' => URL . '/public'
-    ]);
-
-    Flash::define([
-        'FLASH_ERROR' => 'error',
-        'FLASH_DANGER' => 'danger',
-        'FLASH_WARNING' => 'warning',
-        'FLASH_INFO' => 'info',
-        'FLASH_SUCCESS' => 'success'
-    ]);
 
     $router = new Router(URL);
 
