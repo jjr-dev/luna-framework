@@ -5,7 +5,7 @@
     use \App\Utils\Seo;
 
     class Home extends Page {
-        public static function getPage($req, $res) {
+        public static function homePage($req, $res) {
             $title = 'Luna - Framework MVC';
 
             $seo = new Seo();

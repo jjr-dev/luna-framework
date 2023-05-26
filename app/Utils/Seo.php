@@ -94,13 +94,16 @@
             
             $tags .= $this->renderTags("name", "", $this->tags);
 
-            if($this->twitter) $tags .= $this->twitter->render();
-            if($this->meta) $tags .= $this->meta->render();
+            if($this->twitter)
+                $tags .= $this->renderTags("name", "twitter", $this->twitter->getTags());
+
+            if($this->meta)
+                $tags .= $this->renderTags("property", "og", $this->meta->getTags());
 
             return $tags;
         }
 
-        protected function renderTags($key, $prefix, $tags) {
+        private function renderTags($key, $prefix, $tags) {
             $template = "<meta {$key}='{{tag}}' content='{{content}}'>\n";
 
             $rendered = [];

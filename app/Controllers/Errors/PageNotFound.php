@@ -6,7 +6,7 @@
     use \App\Controllers\Pages\Page;
 
     class PageNotFound extends Page {
-        public static function getPage($req, $res) {
+        public static function notFoundPage($req, $res) {
             $title = 'Luna - Página não encontrada';
             
             $seo = new Seo();
