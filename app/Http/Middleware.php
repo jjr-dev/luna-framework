@@ -37,7 +37,7 @@
                 throw new \Exception("Problemas ao processar o Middleware", 500);
                 
             $queue = $this;
-            $next  = function($request) use($queue) {
+            $next  = function($request, $response) use($queue) {
                 return $queue->next($request, $response);
             };
 

@@ -11,7 +11,8 @@
 
             $lines = file($path);
             foreach($lines as $line) {
-                putenv(trim($line));
+                $line = trim($line);
+                if(!empty($line)) putenv($line);
             }
         }
     }
