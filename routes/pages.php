@@ -3,6 +3,6 @@
 
     $router->get('/', [
         function($request, $response) {
-            return Pages\Home::getPage($request, $response);
+            return Pages\Home::homePage($request, $response);
         }
     ]);

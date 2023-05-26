@@ -29,19 +29,19 @@
             $this->tags['url'] = $url;
         }
 
-        public function render() {
-            return parent::renderTags("property", "og", $this->tags);
+        public function getTags() {
+            return $this->tags;
         }
 
-        protected function hasTitle() {
+        public function hasTitle() {
             return isset($this->tags['title']);
         }
 
-        protected function hasDescription() {
+        public function hasDescription() {
             return isset($this->tags['description']);
         }
 
-        protected function hasImage() {
+        public function hasImage() {
             return isset($this->tags['image']);
         }
     }

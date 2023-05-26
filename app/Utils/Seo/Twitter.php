@@ -2,9 +2,7 @@
 
     namespace App\Utils\Seo;
 
-    use \App\Utils\Seo;
-
-    class Twitter extends Seo {
+    class Twitter {
         private $tags = [];
         
         public function __construct() {}
@@ -33,19 +31,19 @@
             $this->tags['url'] = $url;
         }
 
-        public function render() {
-            return parent::renderTags("name", "twitter", $this->tags);
+        public function getTags() {
+            return $this->tags;
         }
 
-        protected function hasTitle() {
+        public function hasTitle() {
             return isset($this->tags['title']);
         }
 
-        protected function hasDescription() {
+        public function hasDescription() {
             return isset($this->tags['description']);
         }
 
-        protected function hasImage() {
+        public function hasImage() {
             return isset($this->tags['image']);
         }
     }
