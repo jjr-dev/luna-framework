@@ -7,7 +7,7 @@
     class Database {
         private static $configs = [];
         
-        private function setConfigs() {
+        private static function setConfigs() {
             $env = getenv();
             self::$configs = [
                 'driver'    => $env['DB_DRIVER'],
