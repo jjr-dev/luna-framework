@@ -5,6 +5,7 @@
     use \Closure;
     use \Exception;
     use \ReflectionFunction;
+    use \App\Common\Environment as Env;
 
     class Router {
         private $url;
@@ -70,7 +71,7 @@
 
             if(isset($params['cache']) && $params['cache']) {
                 if(gettype($params['cache']) === 'boolean')
-                    $params['cache'] = getenv('CACHE_TIME');
+                    $params['cache'] = Env::get('CACHE_TIME');
                     
                 if(!in_array('cache', $params['middlewares']))
                     $params['middlewares'][] = 'cache';

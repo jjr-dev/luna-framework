@@ -2,9 +2,11 @@
     
     namespace App\Utils\Cache;
 
+    use \App\Common\Environment as Env;
+
     class File {
         private static function getFilePath($hash) {
-            $dir = getenv('CACHE_DIR');
+            $dir = Env::get('CACHE_DIR');
             
             if(!file_exists($dir)) {
                 mkdir($dir, 0755, true);

@@ -1,11 +1,11 @@
 <?php
-    use \App\Common\Environment;
+    use \App\Common\Environment as Env;
     use \App\Utils\View;
     use \App\Utils\Flash;
 
-    Environment::load(__DIR__);
+    Env::load(__DIR__);
     
-    define("URL", getenv('URL'));
+    define("URL", Env::get('URL'));
 
     View::define([
         'URL'     => URL,

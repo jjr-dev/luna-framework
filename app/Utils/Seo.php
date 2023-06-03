@@ -4,6 +4,7 @@
 
     use \App\Utils\Seo\Twitter;
     use \App\Utils\Seo\Meta;
+    use \App\Common\Environment as Env;
 
     class Seo {
         private $tags = [];
@@ -12,7 +13,7 @@
 
         public function __construct($opts = []) {
             if(count($opts) == 0) {
-                $default = getenv('DEFAULT_SEO');
+                $default = Env::get('DEFAULT_SEO');
                 $opts = explode(',', $default);
             }
 
