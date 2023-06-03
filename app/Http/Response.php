@@ -2,6 +2,8 @@
 
     namespace App\Http;
 
+    use \App\Common\Environment as Env;
+
     class Response {
         private $headers = [];
         private $httpCode;
@@ -13,7 +15,7 @@
             $this->content  = $content;
 
             if(!$contentType) {
-                $defaultContentType = getenv('DEFAULT_CONTENT_TYPE');
+                $defaultContentType = Env::get('DEFAULT_CONTENT_TYPE');
                 $contentType = $defaultContentType ? $defaultContentType : 'text/html';
             }
 

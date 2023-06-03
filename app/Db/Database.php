@@ -2,13 +2,15 @@
 
     namespace App\Db;
 
+    use \App\Common\Environment as Env;
     use \Illuminate\Database\Capsule\Manager as Capsule;
 
     class Database {
         private static $configs = [];
         
         private static function setConfigs() {
-            $env = getenv();
+            $env = Env::get();
+            
             self::$configs = [
                 'driver'    => $env['DB_DRIVER'],
                 'host'      => $env['DB_HOST'],
