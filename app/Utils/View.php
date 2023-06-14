@@ -13,16 +13,42 @@
             return file_exists($file) ? file_get_contents($file) : '';
         }
 
-        public static function render($view, $vars = [], $content = false) {
+        private static function organizeVars($vars) {
+            $hasArray = false;
+
+            foreach($vars as $varsKey => $varsValue) {
+                if(is_object($varsValue))
+                    $varsValue = (array) $varsValue;
+                    
+                if(!is_array($varsValue))
+                    continue;
+
+                foreach($varsValue as $varKey => $varValue) {
+                    $vars[$varsKey . '->' . $varKey] = $varValue;
+                }
+                
+                $hasArray = true;
+                unset($vars[$varsKey]);
+            }
+
+            if($hasArray)
+                $vars = self::organizeVars($vars);
+
+            return $vars;
+        }
+
+        public static function render($view, $vars = [], $content = false, $removeEmptyVars = true) {
             $contentView = $content ? $content : self::getContentView($view);
 
             $vars = array_merge(self::$vars, $vars);
+            $vars = self::organizeVars($vars);
 
             $keys = array_keys($vars);
             $keys = array_map(function($item) {
                 return '{{' . $item . '}}';
             }, $keys);
 
-            return str_replace($keys, array_values($vars), $contentView);
+            $content = str_replace($keys, array_values($vars), $contentView);
+            return $removeEmptyVars ? preg_replace('/{{.*?}}/', '', $content) : $content;
         }
     }
