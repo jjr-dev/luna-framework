@@ -3,6 +3,7 @@
 
     use \App\Utils\View;
     use \App\Utils\Seo;
+    use \App\Utils\Page;
 
     class Home extends Page {
         public static function homePage($req, $res) {

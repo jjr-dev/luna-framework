@@ -3,7 +3,7 @@
 
     use \App\Utils\View;
     use \App\Utils\Seo;
-    use \App\Controllers\Pages\Page;
+    use \App\Utils\Page;
 
     class PageNotFound extends Page {
         public static function notFoundPage($req, $res) {
