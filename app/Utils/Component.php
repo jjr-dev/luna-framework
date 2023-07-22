@@ -11,4 +11,12 @@
             $contentComponent = self::getContentComponent($component);
             return View::render(false, $vars, $contentComponent);
         }
+
+        public static function multiRender($component, $vars = []) {
+            $contentComponents = [];
+            foreach($vars as $var) {
+                $contentComponents[] = self::render($component, $var);
+            }
+            return implode("", $contentComponents);
+        }
     }

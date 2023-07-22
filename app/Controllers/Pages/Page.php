@@ -12,16 +12,27 @@
         }
         
         public static function getPage($title, $content, $opts = []) {
-            $header = isset($opts['header']) ? $opts['header'] : 'header';
-            $footer = isset($opts['footer']) ? $opts['footer'] : 'footer';
-            $seo = isset($opts['seo']) ? $opts['seo'] : '';
+            $header = 'header';
+            $footer = 'footer';
+            
+            if(isset($opts['header'])) {
+                $header = $opts['header'];
+                unset($opts['header']);
+            }
 
-            return View::render('pages/page', [
-                'title' => $title,
-                'header' => self::getComponent('header', $header),
-                'content' => $content,
-                'footer' => self::getComponent('footer', $footer),
-                'seo' => $seo
-            ]);
+            if(isset($opts['footer'])) {
+                $footer = $opts['footer'];
+                unset($opts['footer']);
+            }
+
+            return View::render('pages/page', array_merge(
+                [
+                    'title' => $title,
+                    'header' => self::getComponent('header', $header),
+                    'content' => $content,
+                    'footer' => self::getComponent('footer', $footer),
+                ],
+                $opts
+            ));
         }
     }
