@@ -1,5 +1,4 @@
 <?php
-
     namespace App\Utils\Seo;
 
     use \App\Utils\Seo;

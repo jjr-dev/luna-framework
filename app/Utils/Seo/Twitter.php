@@ -1,5 +1,4 @@
 <?php
-
     namespace App\Utils\Seo;
 
     class Twitter {

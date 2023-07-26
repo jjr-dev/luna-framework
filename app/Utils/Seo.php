@@ -1,10 +1,9 @@
 <?php
-
     namespace App\Utils;
 
     use \App\Utils\Seo\Twitter;
     use \App\Utils\Seo\Meta;
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
 
     class Seo {
         private $tags = [];

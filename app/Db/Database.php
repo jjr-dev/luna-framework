@@ -1,8 +1,7 @@
 <?php
-
     namespace App\Db;
 
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
     use \Illuminate\Database\Capsule\Manager as Capsule;
 
     class Database {

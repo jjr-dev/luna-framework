@@ -3,9 +3,13 @@
 
     use \App\Utils\View;
     use \App\Utils\Seo;
+    use \App\Utils\Page;
+    use \App\Utils\Update;
 
     class Home extends Page {
         public static function homePage($req, $res) {
+            Update::getReleases();
+
             $title = 'Luna - Framework MVC';
 
             $seo = new Seo();
@@ -16,7 +20,10 @@
             $seo->meta()->setType('website');
             $seo = $seo->render();
 
-            $content = View::render('pages/home');
+            $content = View::render('pages/home', [
+                'version' => Update::getVersion()
+            ]);
+            
             $content = parent::getPage($title, $content, ['seo' => $seo]);
 
             return $res->send(200, $content);
