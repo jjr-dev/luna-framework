@@ -1,5 +1,5 @@
 <?php
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
     use \App\Utils\View;
     use \App\Utils\Flash;
 

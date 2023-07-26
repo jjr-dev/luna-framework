@@ -1,7 +1,5 @@
 <?php
-    namespace App\Controllers\Pages;
-
-    use \App\Utils\View;
+    namespace App\Utils;
 
     class Page {
         private static function getComponent($type, $file) {

@@ -1,10 +1,10 @@
 <?php
-
     namespace App\Http;
 
     class Request {
         private $httpMethod;
         private $uri;
+        private $router;
         private $pathParams = [];
         private $queryParams = [];
         private $postVars = [];

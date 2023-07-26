@@ -1,8 +1,7 @@
 <?php
-
     namespace App\Http;
 
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
 
     class Response {
         private $headers = [];

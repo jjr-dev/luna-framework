@@ -1,8 +1,7 @@
 <?php
-    
     namespace App\Middlewares;
 
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
     use \App\Utils\Cache\File as CacheFile;
 
     class Cache {

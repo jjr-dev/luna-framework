@@ -1,8 +1,7 @@
 <?php
-    
     namespace App\Utils\Cache;
 
-    use \App\Common\Environment as Env;
+    use \App\Utils\Environment as Env;
 
     class File {
         private static function getFilePath($hash) {

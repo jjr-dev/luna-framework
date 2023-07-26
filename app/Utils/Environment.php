@@ -1,6 +1,5 @@
 <?php
-
-    namespace App\Common;
+    namespace App\Utils;
 
     class Environment {
         public static function load($dir) {
