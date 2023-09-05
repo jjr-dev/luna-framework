@@ -1,5 +1,5 @@
 {
-    "name": "luna/mvc",
+    "name": "phpluna/mvc",
     "description": "Um simples MVC em PHP",
     "type": "library",
     "authors": [
@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "illuminate/database": "^8.83"
     }
 }
