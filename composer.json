@@ -1,11 +1,20 @@
 {
-	"name": "jjrdev/mvc",
-	"autoload": {
-		"psr-4": {
-			"App\\": "app"
-		}
-	},
-	"require": {
-		"illuminate/database": "^8.83"
-	}
+    "name": "luna/mvc",
+    "description": "Um simples MVC em PHP",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Julimar Junior",
+            "email": "julimargomesjr@hotmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Luna\\": "src"
+        }
+    },
+    "require": {
+        "php": ">=7.0",
+        "illuminate/database": "^8.83"
+    }
 }
