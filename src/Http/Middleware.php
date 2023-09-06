@@ -3,7 +3,7 @@
 
     class Middleware {
         private static $core = [
-            'cache' => Luna\Middlewares\Cache::class
+            'cache' => \Luna\Middlewares\Cache::class
         ];
         
         private static $map = [];
