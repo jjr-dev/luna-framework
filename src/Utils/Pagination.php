@@ -59,8 +59,8 @@
             $defaultComponents = ['number', 'first', 'last', 'previous', 'next', 'ellipsis'];
             
             foreach($defaultComponents as $key) {
-                if(!isset($components[$key])) $components[$key] = in_array($key, ['first', 'last']) ? 'number' : $key;
-                else $components[$key] = $components[$key];
+                if(!isset($components[$key])) $components[$key] = 'pagination/' . (in_array($key, ['first', 'last']) ? 'number' : $key);
+                else $components[$key] = 'pagination/' . $components[$key];
             }
 
             $pagination = "";
