@@ -18,93 +18,13 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
 
 Antes de iniciar seu projeto Luna, é necessário realizar a instalação do PHP (_versão 7.1 ou superior_) e [Composer](https://getcomposer.org/).
 
-Utilize o comando `composer require phpluna/mvc` para instalar o Luna em seu projeto.
+Utilize o comando `composer create-project phpluna/luna project-name` para instalar o Luna em seu projeto.
 
 ## Inicializando
 
-O Luna será instalado na pasta `vendor` (assim como outros pacotes do Composer), para que todos os recursos funcionem corretamente, crie um arquivo `.htaccess`:
-
-```apacheconf
-RewriteEngine on
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ ./index.php [QSA,NC]
-```
-
-Com o arquivo `.htaccess` configurado, crie o arquivo `index.php`:
-
-```php
-<?php
-    require __DIR__ . '/vendor/autoload.php';
-
-    // Load Dependencies
-    use Luna\Utils\View;
-    use Luna\Utils\Environment;
-    use Luna\Http\Middleware;
-    use Luna\Http\Router;
-    use Luna\Db\Database;
-
-    // Define Root Directory
-    define("ROOT_DIR", __DIR__);
-
-    // Load Environment
-    Environment::load(ROOT_DIR);
-
-    // Define URL Global Var
-    define("URL", Environment::get('URL'));
-
-    // Define View Vars
-    View::define(['URL' => URL]);
-
-    // Boot Database
-    Database::boot();
-
-    // Define Middlewares
-    Middleware::setMap([]);
-    Middleware::setDefault([]);
-
-    // Start Routers
-    new Router(URL);
-```
-
-A classe `Environment` é responsável por carregar o arquivo `.env` com as configurações base, recomenda-se a criação do mesmo no mesmo nível do `index.php` e `.htaccess`:
-
-```shell
-DB_DRIVER=mysql
-DB_HOST=localhost
-DB_USER=user
-DB_PASS=password
-DB_NAME=database
-URL=http://localhost/luna
-DEFAULT_CONTENT_TYPE=text/html
-CACHE_TIME=100000
-CACHE_DIR=./cache
-ALLOW_NO_CACHE_HEADER=true
-DEFAULT_SEO=twitter,meta
-```
+Renomeie o arquivo `.env.example` para `.env` e configure a URL conforme necessário.
 
 > As configurações gerais do projeto podem ser definidas no mesmo arquivo `.env`, como por exemplo a chave de autenticação de alguma API de terceiros.
-
-## Diretórios
-
-Recomenda-se seguir o seguinte padrão de diretórios:
-
-```
-  ├─ vendor
-  ├─ app
-  │   └─ Controllers
-  │   └─ Services
-  │   └─ Helpers
-  │   └─ Models
-  ├─ public
-  │   └─ assets
-  ├─ README.md
-  ├─ resources
-  │   └─ components
-  │   └─ views
-  └─ routes
-      └─ pages.php
-```
 
 ## Rotas
 
@@ -235,6 +155,87 @@ $router->get('/redirect', [
 ]);
 ```
 
+### Middlewares
+
+Os middlewares fornecem um mecanismo conveniente para validar requisições em rotas específicas:
+
+```php
+$router->get('/', [
+    'middlewares' => [ 'maintenance' ],
+    function($request, $response) {
+        // ...
+    }
+]);
+```
+
+A classe do Middleware deve conter a função `handle` que será executada ao acessar a rota:
+
+```php
+namespace App\Middlewares;
+
+class Maintenance {
+    public function handle($request, $response, $next) {
+        // ...
+
+        return $next($request, $response);
+    }
+}
+```
+
+A função `handle` deve receber os parâmetros `$request`, `$response` e `$next` e deve retornar `$next($request, $response)` para prosseguir com a fila.
+
+Após criar a classe do Middleware, é necessário defini-lo com um apelido para que seja utilizado na definição da rota:
+
+```php
+use \App\Http\Middleware;
+
+Middleware::setMap([
+    'maintenance' => \App\Middlewares\Maintenance::class
+]);
+```
+
+É possível definir `middlewares padrões` que serão executados em todas as rotas criadas:
+
+```php
+Middleware::setDefault([
+    'maintenance'
+]);
+```
+
+## Cache
+
+O armazenamento do retorno de rotas em cache reduz o tempo de retorno para futuras requisições da mesma rota:
+
+```php
+$router->get('/', [
+    'cache' => 10000,
+    function($request, $response) {
+        // ...
+    }
+]);
+```
+
+> O tempo de cache é definido em milisegundos
+
+As configurações de cache podem ser definidas no arquivo `.env`:
+
+| Configuração          | Descrição                                   |
+| --------------------- | ------------------------------------------- |
+| CACHE_TIME            | Valor padrão de cache                       |
+| CACHE_DIR             | Diretório de armazenamento do cache         |
+| ALLOW_NO_CACHE_HEADER | Permitir o header `Cache-Control: no-cache` |
+
+O valor de CACHE_TIME é definido como tempo de cache (também em milisegundos) quando o cache da rota for definido como true:
+
+```php
+$router->get('/', [
+    'cache' => true,
+    function($request, $response) {
+        // ...
+    }
+]);
+```
+
 # Contribuindo com o projeto
 
 Obrigado por considerar contribuir com o Luna! O guia de contribuição ainda encontra-se em desenvolvimento e em breve poderá entender como fazê-lo.
@@ -243,8 +244,4 @@ Obrigado por considerar contribuir com o Luna! O guia de contribuição ainda en
 
 # Licença
 
-O Luna é um software de código aberto sob a [MIT License](https://github.com/jjr-dev/luna/blob/main/LICENSE).
-
-```
-
-```
+O Luna é um software de código aberto sob a [MIT License](https://github.com/jjr-dev/luna-framework/blob/main/LICENSE).
