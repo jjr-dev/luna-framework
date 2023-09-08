@@ -1,6 +1,6 @@
 {
-    "name": "phpluna/mvc",
-    "description": "Um simples MVC em PHP",
+    "name": "phpluna/framework",
+    "description": "Um simples framework MVC em PHP",
     "type": "library",
     "license": "MIT",
     "authors": [
