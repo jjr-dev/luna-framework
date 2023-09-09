@@ -31,13 +31,18 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
         -   [Tipos de resposta da requisição](#tipos-de-resposta-da-requisição)
     -   [Services](#services)
     -   [Helpers](#helpers)
-    -   Views
+    -   [Views](#views)
+        -   [Padronização de página](#padronização-de-página)
+        -   [Variáveis padrões](#variáveis-padrões)
     -   [Flash Messages](#flash-messages)
     -   [Components](#components)
-    -   Pagination
+    -   [Pagination](#pagination)
+        -   [Template de paginação](#template-de-paginação)
     -   [Database](#database)
-    -   Models
-    -   SEO
+    -   [Models](#models)
+    -   [SEO](#seo)
+        -   [Twitter e Meta OpenGraph](#twitter-e-meta-opengraph)
+        -   [Robots](#robots)
     -   [Environment](#environment)
 -   [Contribuindo com o projeto](#contribuindo-com-o-projeto)
 -   [Licença](#licença)
@@ -384,6 +389,81 @@ class User {
 
 ## Views
 
+As views podem ser criadas em `resources/views` em `.html` e utilizadas na renderização:
+
+```php
+namespace App\Controllers\Pages;
+
+use \App\Utils\View;
+
+class Product {
+    public static function productPage($request, $response) {
+        $content = View::render('pages/product', [
+            'name' => "Produto nome",
+            'description' => "Produto descrição"
+        ]);
+        return $response->send(200, $content);
+    }
+}
+```
+
+Arquivo `resources/view/page/product.html`:
+
+```html
+<h1>{{name}}</h1>
+<p>{{description}}</p>
+
+<!-- Resultado: -->
+<!-- <h1>Produto nome</h1> -->
+<!-- <p>Produto descrição</p> -->
+```
+
+### Padronização de página
+
+A classe `Page` possui funções que permitem padronizar as páginas com `header`, `footer` e outros itens padrões, alterando o valor de `content`:
+
+```php
+namespace App\Controllers\Pages;
+
+use \App\Utils\View;
+
+class Product extends Page {
+    public static function productPage($request, $response) {
+        $content = View::render('pages/product', [
+            'name' => "Produto nome",
+            'description' => "Produto descrição"
+        ]);
+        $content = parent::getPage("Produto Título", $content);
+
+        return $response->send(200, $content);
+    }
+}
+```
+
+Com uso da classe `Page` a variável `$content` irá conter a junção dos arquivos `page.html`, `header.html` e `footer.html` (já existentes em `/resources/view`).
+
+É possíve também adicionar novos arquivos padrões para cabeçalho e rodapé, podendo por exemplo criar diferentes cabeçalhos para a área pública e área administrativa:
+
+```php
+$content = parent::getPage("Produto Título", $content, [
+    'header' => 'header-admin',
+    'footer' => 'footer-admin'
+]);
+```
+
+Para que os arquivos não sejam adicionadas, defina-o como `false`.
+
+### Variáveis padrões
+
+As variáveis mais comuns podem ser definidas no arquivo `index.html` em `View::define()` e podem ser utilizadas em qualquer View:
+
+```html
+<img src="{{PUBLIC}}/assets/img/php-logo.png" />
+
+<a href="{{URL}}"><button>Início</button></a>
+<a href="{{URL}}/products"><button>Produtos</button></a>
+```
+
 ## Flash Messages
 
 A Flash Message pode ser utilizada para retornar mensagens para a view de forma dinâmica:
@@ -453,7 +533,7 @@ namespace App\Controllers\Pages;
 use \App\Utils\Component;
 
 class Product {
-    public static function getProduct($request, $response) {
+    public static function productsPage($request, $response) {
         // ...
         $productCard = Component::render('product-card', $product);
         $content = View::render('pages/product', ['productCard' => $productCard]);
@@ -476,6 +556,73 @@ $content = View::render('pages/product', ['productCards' => $productCards]);
 
 ## Pagination
 
+A paginação de `arrays` para listagem pode ser realizada com uso da classe `Pagination`:
+
+```php
+namespace App\Controllers\Pages;
+
+use \App\Utils\Pagination;
+
+class Product {
+    public static function productsPage($request, $response) {
+        // ...
+        $pagination = new Pagination($products, $page, $limit);
+        $products = $pagination->get();
+    }
+}
+```
+
+A função `get()` retornará a lista já paginada e outros dados sobre a paginação.
+
+### Template de paginação
+
+O controle da paginação pode ser renderizado para ser exibido na View:
+
+```php
+namespace App\Controllers\Pages;
+
+use \App\Utils\Pagination;
+
+class Product {
+    public static function productsPage($request, $response) {
+        // ...
+        $pagination = new Pagination($products, $page, $limit);
+        $paginationRender = $pagination->render($req);
+
+        $content = View::render('pages/products', ['pagination' => $paginationRender]);
+    }
+}
+```
+
+Os componentes utilizados na criação da paginação podem ser modificados em `resources/components/pagination` e também podem ser alterados na renderização:
+
+```php
+$paginationRender = $pagination->render($req, [
+    'last' => 'last.html'
+    // ...
+]);
+```
+
+> O `href` dos itens sempre utilizará o parâmetro {{page}} para definir a página destino.
+
+Caso seja necessário remover algum item, defina o parâmetro como `false`.
+
+Para limitar a quantidade de itens exibidos para cada lado do item atual, utilize:
+
+```php
+$paginationRender = $pagination->render($req, [], 3);
+```
+
+Exemplo de resultado da renderização com **3** itens para cada lado:
+
+<center>
+
+![Exemplo de paginação](https://i.imgur.com/0oXx93X.png)
+
+</center>
+
+> Estilização deve ser realizada separadamente
+
 ## Database
 
 O acesso ao Banco de Dados de projetos Luna são realizados através do **Object-Relational Mapping** (ORM) utilizado no _Laravel_ chamado **Illuminate/Eloquent** e o mesmo permite o uso de funções simples e rápidas para escrever querys SQLs complexas.
@@ -493,7 +640,143 @@ Acesse a documentação completo do **Eloquent** [aqui](https://laravel.com/docs
 
 ## Models
 
+O Model segue o padrão do ORM **Illuminate/Eloquent**:
+
+```php
+namespace App\Models;
+
+use \App\Db\Database;
+use \Illuminate\Database\Eloquent\Model;
+
+class Product extends Model {
+    // ...
+}
+```
+
+Uso do model:
+
+```php
+namespace App\Services;
+
+use \App\Models\Product;
+
+class Product {
+    public function find() {
+        return Product::find(1);
+    }
+
+    public function list() {
+        return Product::all();
+    }
+}
+```
+
 ## SEO
+
+O **Search Engine Optimization** (SEO) pode ser criado para exibição na View:
+
+```php
+namespace App\Controllers;
+
+use \App\Utils\Seo;
+
+class Product {
+    public static function getProduct($request, $response) {
+        // ...
+        $seo = new Seo();
+        $seo->setTitle("Produto nome");
+        $seo->setDescription("Produto descrição");
+        $seo->setKeywords(["produto-chave-1", "produto-chave-2"]);
+        $seo->setImage("produto.png");
+        $seo->setAuthor("Autor nome");
+        $seoRender = $seo->render();
+
+        $content = View::render('pages/product', ['seo' => $seoRender]);
+    }
+}
+```
+
+> A função `$seo->setKeywords()` pode receber as chaves em array ou em string, como por exemplo: `$seo->setKeywords("chave-1, chave-2")`.
+
+> Caso não utilize um título definido separadamente na renderização da view em `parent::getPage` utilize `$seo->render(true)` para que a tag `<title>` seja renderizada pelo SEO.
+
+### Twitter e Meta OpenGraph
+
+A configuração para **Twitter** e **Meta OG** podem ser realizadas separadamente:
+
+```php
+$seo = new Seo();
+$seo->setTitle("Produto nome");
+$seo->twitter()->setTitle("Produto nome (Twitter)");
+$seo->meta()->setTitle("Produto nome (Meta)");
+```
+
+É possível configurar todas as `tags` separadamente para cada rede:
+
+```php
+$seo->twitter()->setTitle($title);
+$seo->twitter()->setDescription($description);
+$seo->twitter()->setCard($card);
+$seo->twitter()->setSite($site);
+$seo->twitter()->setImage($image);
+$seo->twitter()->setUrl($url);
+
+$seo->meta()->setTitle($title);
+$seo->meta()->setDescription($description);
+$seo->meta()->setUrl($url);
+$seo->meta()->setImage($image);
+$seo->meta()->setType($type);
+```
+
+Caso os dados para **Twitter** e **Meta OG** sejam iguais, basta informar de uma das seguintes formas:
+
+```php
+$seo = new Seo();
+$seo->twitter();
+$seo->meta();
+$seo->setTitle("Produto nome")
+// ...
+```
+
+```php
+$seo = new Seo(['twitter', 'meta']);
+$seo->setTitle("Produto nome")
+// ...
+```
+
+> Caso utilize `$seo->twitter()` ou `$seo->meta()` após o uso de `$seo->setTitle()` e outros, as definições de título, descrição e imagem serão compartilhadas, para desativar essa função utilize $seo->twitter(false) ou $seo->meta(false) no primeiro uso de cada.
+
+Caso a classe `Seo` seja inicializada sem definir o **Twitter** ou **Meta OG** o valor definido no arquivo `.env` em `DEFAULT_SEO` será utilizado.
+
+### Robots
+
+A configuração de Robots podem ser adicionadas na renderização:
+
+```php
+$seo = new Seo();
+
+$seo->setRobots($index, $follow);
+```
+
+As variáveis `$index` e `$follow` devem ser `Boolean`.
+
+Exemplos de de definição do Robots:
+
+```php
+// Página indexada e com links seguidos:
+$seo->setRobots();
+
+// Página não indexada:
+$seo->setRobots(false);
+
+// Página com links não seguidos:
+$seo->setRobots(true, false);
+
+// Página não indexada e links não seguidos:
+$seo->setRobots(false, false);
+```
+
+> Por padrão a indexação utiliza links seguidos, então se for utilizar a função `$seo->setRobots()` sem passar nenhum parâmetro, ela se torna dispensável.
 
 ## Environment
 
