@@ -1,7 +1,7 @@
 <?php
     namespace Luna\Utils;
 
-    class Page {
+    class Controller {
         private static function getComponent($type, $file) {
             if($file === false) return '';
             
@@ -9,7 +9,7 @@
             return View::render($file);
         }
         
-        public static function getPage($title, $content, $opts = []) {
+        public static function page($title, $content, $opts = []) {
             $header = 'header';
             $footer = 'footer';
             
@@ -32,5 +32,13 @@
                 ],
                 $opts
             ));
+        }
+
+        public static function success($data, $code = 200) {
+            return ['data' => $data, 'code' => $code];
+        }
+
+        public static function error($error, $code = 400) {
+            return ['error' => $error, 'code' => $code];
         }
     }
