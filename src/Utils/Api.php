@@ -1,5 +1,5 @@
 <?php
-    namespace App\Utils;
+    namespace Luna\Utils;
 
     class Api {
         public static function success($data, $code = 200) {
