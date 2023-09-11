@@ -1,5 +1,5 @@
 <?php
-    namespace Luna\Services;
+    namespace Luna\Utils;
     
     class Service {
         public static function exception($e) {
