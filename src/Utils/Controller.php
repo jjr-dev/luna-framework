@@ -34,11 +34,11 @@
             ));
         }
 
-        public static function success($data, $code = 200) {
+        public static function success($data = [], $code = 200) {
             return ['data' => $data, 'status' => $code, 'error' => false];
         }
 
-        public static function error($data, $code = 400) {
+        public static function error($data = [], $code = 400) {
             return ['data' => $data, 'status' => $code, 'error' => true];
         }
     }
