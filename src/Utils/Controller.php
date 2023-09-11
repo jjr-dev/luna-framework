@@ -35,10 +35,10 @@
         }
 
         public static function success($data, $code = 200) {
-            return ['data' => $data, 'code' => $code];
+            return ['data' => $data, 'status' => $code, 'error' => false];
         }
 
-        public static function error($error, $code = 400) {
-            return ['error' => $error, 'code' => $code];
+        public static function error($data, $code = 400) {
+            return ['data' => $data, 'status' => $code, 'error' => true];
         }
     }
