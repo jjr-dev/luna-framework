@@ -57,7 +57,7 @@
             return $coalescences;
         }
 
-        public static function render($view, $vars = [], $content = false, $removeEmptyVars = true) {
+        public static function render($view, $vars = [], $content = false) {
             $contentView = $content ? $content : self::getContentView($view);
 
             $coalescences = self::organizeCoalescence($contentView);
@@ -88,6 +88,6 @@
             if($coalescences)
                 $content = str_replace($coalescencesKeys, array_values($coalescences), $content);
 
-            return $removeEmptyVars ? preg_replace('/{{.*?}}/', '', $content) : $content;
+            return $content;
         }
     }

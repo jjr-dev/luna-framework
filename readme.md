@@ -441,7 +441,7 @@ $data = [
 ]
 ```
 
-Variáveis que não são enviadas são, por padrão, removidas na renderização, caso deseje informar um valor caso a variável não seja informada, utilize `??`:
+Variáveis que não são enviadas podem receber um valor pré-definido com `??`:
 
 ```html
 <p>{{name ?? Nome não definido}}</p>
