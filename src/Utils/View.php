@@ -37,8 +37,43 @@
             return $vars;
         }
 
+        private static function organizeCoalescence($content) {
+            $pattern = '/{{(.*?)\?\?(.*?)}}/';
+            preg_match_all($pattern, $content, $matches);
+
+            if(!$matches || count($matches[0]) == 0) return false;
+            $matches = $matches[0];
+            
+            $coalescences = [];
+            foreach($matches as $item) {
+                $item = substr($item, 2, -2);
+
+                list($key, $value) = explode("??", $item, 2);
+                if(!$key || !$value) continue;
+
+                $coalescences[trim($key)] = trim($value);
+            }
+
+            return $coalescences;
+        }
+
         public static function render($view, $vars = [], $content = false, $removeEmptyVars = true) {
             $contentView = $content ? $content : self::getContentView($view);
+
+            $coalescences = self::organizeCoalescence($contentView);
+            if($coalescences) {
+                $coalescencesPreKeys = array_keys($coalescences);
+
+                $coalescencesKeys = array_map(function($item) {
+                    return '{{' . $item . '}}';
+                }, $coalescencesPreKeys);
+
+                $coalescencesPreKeys = array_map(function($item) use ($coalescences) {
+                    return '{{' . $item . ' ?? ' . $coalescences[$item] . '}}';
+                }, $coalescencesPreKeys);
+
+                $contentView = str_replace($coalescencesPreKeys, $coalescencesKeys, $contentView);
+            }
 
             $vars = array_merge(self::$vars, $vars);
             $vars = self::organizeVars($vars);
@@ -49,6 +84,10 @@
             }, $keys);
 
             $content = str_replace($keys, array_values($vars), $contentView);
+
+            if($coalescences)
+                $content = str_replace($coalescencesKeys, array_values($coalescences), $content);
+
             return $removeEmptyVars ? preg_replace('/{{.*?}}/', '', $content) : $content;
         }
     }
