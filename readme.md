@@ -418,6 +418,37 @@ Arquivo `resources/view/page/product.html`:
 <!-- <p>Produto descrição</p> -->
 ```
 
+Para acessar diferentes níveis do `array`, utilize `->`, por exemplo:
+
+```html
+<p>{{name->first}}</p>
+<p>{{phone->main->number}}</p>
+```
+
+Obteria os valores, de:
+
+```php
+$data = [
+    'phone' => [
+        'main' => [
+            'number' => '12345'
+        ]
+    ],
+    'name' => [
+        'full' => 'Fulano de Tal',
+        'first' => 'Fulano',
+    ],
+]
+```
+
+Variáveis que não são enviadas são, por padrão, removidas na renderização, caso deseje informar um valor caso a variável não seja informada, utilize `??`:
+
+```html
+<p>{{name ?? Nome não definido}}</p>
+```
+
+> As variáveis da View seguem as mesmas regras dos Components, sendo assim, ambos conseguem utilizar todos os recursos.
+
 ### Padronização de página
 
 A classe `Page` possui funções que permitem padronizar as páginas com `header`, `footer` e outros itens padrões, alterando o valor de `content`:
