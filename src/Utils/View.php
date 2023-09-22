@@ -75,6 +75,9 @@
                 $contentView = str_replace($coalescencesPreKeys, $coalescencesKeys, $contentView);
             }
 
+            if(is_object($vars) && method_exists($vars, 'toArray'))
+                $vars = $vars->toArray();
+
             $vars = array_merge(self::$vars, $vars);
             $vars = self::organizeVars($vars);
 
