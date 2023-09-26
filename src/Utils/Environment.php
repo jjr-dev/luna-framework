@@ -3,7 +3,7 @@
 
     class Environment {
         public static function load($dir = false) {
-            if(!$dir) $dir = ROOT_DIR;
+            if(!$dir) $dir = Environment::get("__DIR__");
             $path = $dir . '/.env';
             
             if(!file_exists($path))

@@ -17,7 +17,7 @@
         private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS'];
 
         public function __construct($url, $dir = false) {  
-            if(!$dir) $dir = ROOT_DIR . '/routes';
+            if(!$dir) $dir = Environment::get("__DIR__") . '/routes';
 
             $this->request  = new Request($this);
             $this->response = new Response();

@@ -9,7 +9,7 @@
         }
 
         private static function getContentView($view) {
-            $file = ROOT_DIR . '/resources/views/' . $view . '.html';
+            $file = Environment::get("__DIR__") . '/resources/views/' . $view . '.html';
             return file_exists($file) ? file_get_contents($file) : '';
         }
 
