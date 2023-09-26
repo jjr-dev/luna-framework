@@ -1,14 +1,14 @@
 <?php
     namespace Luna\Db;
 
-    use Luna\Utils\Environment as Env;
+    use Luna\Utils\Environment;
     use Illuminate\Database\Capsule\Manager as Capsule;
 
     class Database {
         private static $configs = [];
         
         private static function setConfigs() {
-            $env = Env::get();
+            $env = Environment::get();
             
             self::$configs = [
                 'driver'    => $env['DB_DRIVER'],
