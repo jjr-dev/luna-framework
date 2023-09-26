@@ -22,11 +22,13 @@
             ];
         }
 
-        public static function boot() {
+        public static function boot($global = false) {
             self::setConfigs();
             
             $capsule = new Capsule;
             $capsule->addConnection(self::$configs);
             $capsule->bootEloquent();
+
+            if($global) $capsule->setAsGlobal();
         }
     }
