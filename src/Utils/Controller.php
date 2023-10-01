@@ -39,6 +39,6 @@
         }
 
         public static function error($data = [], $code = 400) {
-            return ['data' => $data, 'status' => $code, 'error' => true];
+            return ['data' => $data, 'status' => $code ?: 400, 'error' => true];
         }
     }

@@ -17,6 +17,6 @@
             foreach($vars as $var) {
                 $contentComponents[] = self::render($component, $var);
             }
-            return implode("", $contentComponents);
+            return $contentComponents ? implode("", $contentComponents) : [];
         }
     }
