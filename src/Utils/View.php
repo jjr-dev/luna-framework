@@ -19,6 +19,9 @@
             foreach($vars as $varsKey => $varsValue) {
                 if(is_object($varsValue))
                     $varsValue = (array) $varsValue;
+
+                if($varsValue === NULL)
+                    unset($vars[$varsKey]);
                     
                 if(!is_array($varsValue))
                     continue;
