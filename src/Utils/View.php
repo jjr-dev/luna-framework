@@ -60,8 +60,20 @@
             return $coalescences;
         }
 
+        private static function removeNewlinesInsideBraces($input) {
+            $pattern = '/\{\{(.*?)\}\}/s';
+            $output = preg_replace_callback($pattern, function($matches) {
+                $block = rtrim(preg_replace('/\s+/', ' ', $matches[1]));
+                if(substr($block, -2) === "??") $block .= " ";
+                return '{{' . $block . '}}';
+            }, $input);
+        
+            return $output;
+        }
+
         public static function render($view, $vars = [], $content = false) {
             $contentView = $content ? $content : self::getContentView($view);
+            $contentView = self::removeNewlinesInsideBraces($contentView);
 
             $coalescences = self::organizeCoalescence($contentView);
             if($coalescences) {
