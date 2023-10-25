@@ -220,7 +220,7 @@ A função `handle` deve receber os parâmetros `$request`, `$response` e `$next
 Após criar a classe do Middleware, é necessário defini-lo com um apelido para que seja utilizado na definição da rota:
 
 ```php
-use \App\Http\Middleware;
+use Luna\Http\Middleware;
 
 Middleware::setMap([
     'maintenance' => \App\Middlewares\Maintenance::class
@@ -350,7 +350,7 @@ class Product {
 Uso do service:
 
 ```php
-use \App\Services\Product as ProductService;
+use App\Services\Product as ProductService;
 
 class Product {
     public static function getProduct($request, $response) {
@@ -378,7 +378,7 @@ class Uuid {
 Uso do Helper:
 
 ```php
-use \App\Helpers\Uuid as UuidHelper;
+use App\Helpers\Uuid as UuidHelper;
 
 class User {
     public function find($id) {
@@ -394,7 +394,7 @@ As views podem ser criadas em `resources/views` em `.html` e utilizadas na rende
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\View;
+use Luna\Utils\View;
 
 class Product {
     public static function productPage($request, $response) {
@@ -456,7 +456,7 @@ A classe `Page` possui funções que permitem padronizar as páginas com `header
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\View;
+use Luna\Utils\View;
 
 class Product extends Page {
     public static function productPage($request, $response) {
@@ -502,7 +502,7 @@ A Flash Message pode ser utilizada para retornar mensagens para a view de forma 
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\Flash;
+use Luna\Utils\Flash;
 
 class Product {
     public static function productPage($request, $response) {
@@ -561,7 +561,7 @@ Pequenas estruturas de uma view que sejam repetidas (ou não) podem ser utilizad
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\Component;
+use Luna\Utils\Component;
 
 class Product {
     public static function productsPage($request, $response) {
@@ -592,7 +592,7 @@ A paginação de `arrays` para listagem pode ser realizada com uso da classe `Pa
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\Pagination;
+use Luna\Utils\Pagination;
 
 class Product {
     public static function productsPage($request, $response) {
@@ -612,7 +612,7 @@ O controle da paginação pode ser renderizado para ser exibido na View:
 ```php
 namespace App\Controllers\Pages;
 
-use \App\Utils\Pagination;
+use Luna\Utils\Pagination;
 
 class Product {
     public static function productsPage($request, $response) {
@@ -676,8 +676,8 @@ O Model segue o padrão do ORM **Illuminate/Eloquent**:
 ```php
 namespace App\Models;
 
-use \App\Db\Database;
-use \Illuminate\Database\Eloquent\Model;
+use Luna\Db\Database;
+use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model {
     // ...
@@ -689,7 +689,7 @@ Uso do model:
 ```php
 namespace App\Services;
 
-use \App\Models\Product;
+use App\Models\Product;
 
 class Product {
     public function find() {
@@ -709,7 +709,7 @@ O **Search Engine Optimization** (SEO) pode ser criado para exibição na View:
 ```php
 namespace App\Controllers;
 
-use \App\Utils\Seo;
+use Luna\Utils\Seo;
 
 class Product {
     public static function getProduct($request, $response) {
@@ -814,7 +814,7 @@ $seo->setRobots(false, false);
 O arquivo `.env` pode ser utilizado para definir valores de configurações do projeto e podem ser obtidas em arquivos:
 
 ```php
-use \App\Common\Environment;
+use Luna\Utils\Environment;
 
 Environment::get($key); // Obter item específico
 Environment::get(); // Obter todos os items
