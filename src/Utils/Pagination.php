@@ -54,6 +54,10 @@
 
             $uri = $request->getUri();
             $queryParams = $request->query();
+            
+            if(isset($queryParams['page']))
+                unset($queryParams['page']);
+                
             $href = $uri . '?' . http_build_query(array_merge($queryParams, ['page' => '']));
 
             $defaultComponents = ['number', 'first', 'last', 'previous', 'next', 'ellipsis'];

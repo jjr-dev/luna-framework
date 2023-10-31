@@ -12,7 +12,7 @@
             $lines = file($path);
             foreach($lines as $line) {
                 $line = trim($line);
-                if($line === "") continue;
+                if($line === "" || strpos($line, "=") === false) continue;
 
                 list($key, $value) = explode("=", $line, 2);
 
