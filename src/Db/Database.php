@@ -31,4 +31,15 @@
 
             if($global) $capsule->setAsGlobal();
         }
+
+        public static function queryToSql($query, $replaceBindings = false) {
+            $sql = $query->toSql();
+
+            if($replaceBindings)
+                foreach ($query->getBindings() as $binding) {
+                    $sql = preg_replace('/\?/', "'$binding'", $sql, 1);
+                }
+            
+            return $sql;
+        }
     }
