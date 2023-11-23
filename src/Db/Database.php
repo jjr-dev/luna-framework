@@ -8,17 +8,15 @@
         private static $configs = [];
         
         private static function setConfigs() {
-            $env = Environment::get();
-            
             self::$configs = [
-                'driver'    => $env['DB_DRIVER'],
-                'host'      => $env['DB_HOST'],
-                'database'  => $env['DB_NAME'],
-                'username'  => $env['DB_USER'],
-                'password'  => $env['DB_PASS'],
-                'charset'   => 'utf8',
-                'collation' => 'utf8_unicode_ci',
-                'prefix'    => ''
+                'driver'    => Environment::get('DB_DRIVER'),
+                'host'      => Environment::get('DB_HOST'),
+                'database'  => Environment::get('DB_NAME'),
+                'username'  => Environment::get('DB_USER'),
+                'password'  => Environment::get('DB_PASS'),
+                'charset'   => Environment::get('DB_CHARSET'),
+                'collation' => Environment::get('DB_COLLATION'),
+                'prefix'    => Environment::get('DB_PREFIX')
             ];
         }
 
