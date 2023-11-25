@@ -53,11 +53,21 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
 
 Antes de iniciar seu projeto Luna, é necessário realizar a instalação do PHP (_versão 7.1 ou superior_) e [Composer](https://getcomposer.org/).
 
-Utilize o comando `composer create-project phpluna/luna project-name` para instalar o Luna em seu projeto.
+Utilize o comando para iniciar um projeto com Luna:
+
+```bash
+composer create-project phpluna/luna {project-name}
+```
 
 ## Inicializando
 
-Renomeie o arquivo `.env.example` para `.env` e configure a URL conforme necessário.
+Renomeie o arquivo `.env.example` para `.env` e configure a URL conforme necessário:
+
+```bash
+mv .env.example .env
+```
+
+Caso prefira, duplique o arquivo e mantenha o `.env.example` para que versione os exemplos de variáveis de ambiente.
 
 > As configurações gerais do projeto podem ser definidas no mesmo arquivo `.env`, como por exemplo a chave de autenticação de alguma API de terceiros.
 
