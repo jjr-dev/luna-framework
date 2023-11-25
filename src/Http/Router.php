@@ -139,15 +139,15 @@
             return $this->getError(404, 'URL ' . $uri . ' não encontrada');
         }
 
-        private function getError($errorCode, $msg) {
-            if(!isset($this->errors[$errorCode]) && !isset($this->errors['default']))
-                throw new Exception($msg, $errorCode);
+        private function getError($code, $message) {
+            if(!isset($this->errors[$code]) && !isset($this->errors['default']))
+                throw new Exception($message, $code);
 
-
-            $error = $this->errors[isset($this->errors[$errorCode]) ? $errorCode : 'default'];        
+            $error = $this->errors[isset($this->errors[$code]) ? $code : 'default'];        
 
             $error['variables']['request'] = $this->request;
             $error['variables']['response'] = $this->response;
+            
             return $error;
         }
 
