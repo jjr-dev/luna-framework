@@ -36,7 +36,7 @@
         }
 
         public function get() {
-            return [
+            return (object) [
                 'count' => $this->count,
                 'list'  => $this->paged,
                 'pages' => $this->pages,
@@ -44,6 +44,30 @@
                 'limit' => $this->limit,
                 'total' => $this->total
             ];
+        }
+
+        public function getCount() {
+            return $this->count;
+        }
+
+        public function getList() {
+            return $this->paged;
+        }
+
+        public function getPages() {
+            return $this->pages;
+        }
+
+        public function getPage() {
+            return $this->page;
+        }
+
+        public function getLimit() {
+            return $this->limit;
+        }
+
+        public function getTotal() {
+            return $this->total;
         }
 
         public function render($request, $components = [], $pages = 2) {
