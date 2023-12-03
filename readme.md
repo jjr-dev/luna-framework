@@ -615,6 +615,17 @@ class Product {
 
 A função `get()` retornará a lista já paginada e outros dados sobre a paginação.
 
+É possível obter dados especificos da paginação:
+
+```php
+$pagination->getCount(); // Obter quantidade de itens da página atual
+$pagination->getList(); // Obter lista de itens da página atual
+$pagination->getPages(); // Obter quantidade de páginas
+$pagination->getPage(); // Obter página atual
+$pagination->getLimit(); // Obter quantidade de itens por página
+$pagination->getTotal(); // Obter quantidade total de itens
+```
+
 ### Template de paginação
 
 O controle da paginação pode ser renderizado para ser exibido na View:
