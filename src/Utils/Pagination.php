@@ -73,7 +73,7 @@
         public function render($request, $components = [], $pages = 2) {
             $data = $this->get();
 
-            if($data['pages'] == 0)
+            if($data->pages == 0)
                 return "";
 
             $uri = $request->getUri();
@@ -93,20 +93,20 @@
 
             $pagination = "";
 
-            $first = $data['page'] - $pages;
-            $last  = $data['page'] + $pages;
+            $first = $data->page - $pages;
+            $last  = $data->page + $pages;
 
             if($first < 1) {
                 $last += $first * -1;
                 $first = 1;
             };
 
-            if($last > $data['pages']) $last = $data['pages'];
+            if($last > $data->pages) $last = $data->pages;
 
-            if($components['previous'] && $data['page'] != 1)
+            if($components['previous'] && $data->page != 1)
                 $pagination .= Component::render($components['previous'], [
-                    'href'    => $href . ($data['page'] - 1),
-                    'number'  => $data['page'] - 1
+                    'href'    => $href . ($data->page - 1),
+                    'number'  => $data->page - 1
                 ]);
 
             if($components['first'] && $first != 1)
@@ -123,23 +123,23 @@
                 $pagination .= Component::render($components['number'], [
                     'number'  => $i,
                     'href'    => $href . $i,
-                    'active'  => $i == $data['page'] ? 'active' : ''
+                    'active'  => $i == $data->page ? 'active' : ''
                 ]);
             }
 
-            if($components['ellipsis'] && $last < $data['pages'] - 1)
+            if($components['ellipsis'] && $last < $data->pages - 1)
                 $pagination .= Component::render($components['ellipsis']);
 
-            if($components['last'] && $last != $data['pages'])
+            if($components['last'] && $last != $data->pages)
                 $pagination .= Component::render($components['last'], [
-                    'href'    => $href . $data['pages'],
-                    'number'  => $data['pages']
+                    'href'    => $href . $data->pages,
+                    'number'  => $data->pages
                 ]);
 
-            if($components['next'] && $data['page'] != $data['pages'])
+            if($components['next'] && $data->page != $data->pages)
                 $pagination .= Component::render($components['next'], [
-                    'href'    => $href . ($data['page'] + 1),
-                    'number'  => $data['page'] + 1
+                    'href'    => $href . ($data->page + 1),
+                    'number'  => $data->page + 1
                 ]);
 
             return $pagination;
