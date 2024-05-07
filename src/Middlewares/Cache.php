@@ -8,7 +8,7 @@
         private function isCacheable($request) {
             if($request->getHttpMethod() != "GET") return false;
 
-            if(Env::get('ALLOW_NO_CACHE_HEADER') == 'true') {
+            if(Env::get('ALLOW_NO_CACHE_HEADER')) {
                 $cacheControl = $request->header('Cache-Control');
 
                 if($cacheControl && $cacheControl == 'no-cache') return false;

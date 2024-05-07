@@ -28,6 +28,13 @@
         }
 
         public static function set($key, $value) {
+            if(is_string($value)) {
+                $boolVerify = strtolower($value);
+                
+                if($boolVerify === 'true') $value = true;
+                if($boolVerify === 'false') $value = false;
+            }
+
             $_ENV[$key] = $value;
         }
     }

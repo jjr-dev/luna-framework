@@ -62,8 +62,22 @@
         }
 
         public function query($key = false) {
-            if(!$key) return $this->queryParams;
-            return isset($this->queryParams[$key]) ? $this->queryParams[$key] : null;
+            if(!$key)
+                return $this->queryParams;
+
+            if (!isset($this->queryParams[$key]))
+                return null;
+
+            $value = $this->queryParams[$key];
+            
+            if(is_string($value)) {
+                $boolVerify = strtolower($value);
+                
+                if($boolVerify === 'true') $value = true;
+                if($boolVerify === 'false') $value = false;
+            }
+            
+            return $value;
         }
 
         public function param($key = false) {
