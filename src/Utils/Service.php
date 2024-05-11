@@ -17,7 +17,7 @@
 
                     if(!in_array($code, $inFileErrors)) {
                         try {
-                            $publicId = Log::save($code, $message);
+                            $publicId = Log::save($message, $code);
                         } catch(Exception $ee) {
                             error_log($ee->getCode() . ' - ' . $ee->getMessage());
                         }
