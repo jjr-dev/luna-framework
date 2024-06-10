@@ -34,7 +34,7 @@ class Migrate {
         return $dir . $filename;
     }
 
-    public static function run($dir) {
+    public static function run($dir, $name = false) {
         $filenames = self::getMigrationFilenames($dir);
 
         $executedFilenames = Migration::pluck('filename')->toArray();
@@ -42,11 +42,11 @@ class Migrate {
         $batch = Migration::max('batch');
 
         if(!$batch) $batch = 0;
-        
+
         $batch ++;
 
         foreach($filenames as $key => $filename) {
-            if(in_array($filename, $executedFilenames)) {
+            if(in_array($filename, $executedFilenames) || ($name && strpos($filename, $name) === false)) {
                 unset($filenames[$key]);
                 continue;
             }
