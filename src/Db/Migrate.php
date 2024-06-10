@@ -2,6 +2,7 @@
 namespace Luna\Db;
 
 use Exception;
+use Luna\Utils\Environment;
 use Luna\Utils\MakeFile;
 
 class Migrate {
@@ -13,7 +14,7 @@ class Migrate {
         if(!$table)
             $table = 'table';
 
-        MakeFile::make($dir . $filename, [
+        MakeFile::make(Environment::get("__DIR__") . '/' . $dir . '/' . $filename, [
             '<?php',
             'use Illuminate\Database\Capsule\Manager as Capsule;',
             'use Illuminate\Database\Schema\Blueprint;',
@@ -31,7 +32,7 @@ class Migrate {
             '};'
         ]);
 
-        return $dir . $filename;
+        return $dir . '/' . $filename;
     }
 
     public static function run($dir, $name = false) {
@@ -51,7 +52,7 @@ class Migrate {
                 continue;
             }
 
-            $migration = include $dir . '/' . $filename;
+            $migration = include Environment::get("__DIR__") . '/' . $dir . '/' . $filename;
             $migration->up();
 
             Migration::create([
@@ -66,9 +67,9 @@ class Migrate {
     public static function rollback($dir) {
         $batch = Migration::max('batch');
         $filenames = Migration::where('batch', $batch)->orderByDesc('filename')->pluck('filename')->toArray();
-
+        
         foreach($filenames as $filename) {
-            $migration = include $dir . '/' . $filename;
+            $migration = include Environment::get("__DIR__") . '/' . $dir . '/' . $filename;
             $migration->down();
 
             Migration::where('filename', $filename)->delete();
