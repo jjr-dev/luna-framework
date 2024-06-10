@@ -1,5 +1,5 @@
 <?php
-    namespace Luna\Db;
+namespace Luna\Db;
 
-    class Model extends \Illuminate\Database\Eloquent\Model {
-    }
+class Model extends \Illuminate\Database\Eloquent\Model {
+}

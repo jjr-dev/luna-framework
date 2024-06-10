@@ -39,7 +39,8 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
     -   [Pagination](#pagination)
         -   [Template de paginação](#template-de-paginação)
     -   [Database](#database)
-    -   [Models](#models)
+        -   [Migrations](#migrations)
+        -   [Models](#models)
     -   [SEO](#seo)
         -   [Twitter e Meta OpenGraph](#twitter-e-meta-opengraph)
         -   [Robots](#robots)
@@ -686,19 +687,70 @@ use Luna\Db\Database;
 Database::boot();
 ```
 
-> A conexão já é configurada no arquivo `index.html` do projeto.
+> Ao utilizar o arquivo `bootstrap.php` a conexão é configurada por padrão. Ex: `require __DIR__ . '/bootstrap.php';`.
 
 Acesse a documentação completo do **Eloquent** [aqui](https://laravel.com/docs/5.0/eloquent).
 
-## Models
+### Migrations
+
+A Migration pode ser utilizada para criar modificações no banco de dados de forma programática e versionada.
+
+Para criar uma migration, utilize o **Luna CLI**:
+
+```bash
+php luna make:migration {{name}}
+```
+
+O valor `name` deve conter o nome do arquivo de migração, por exemplo:
+
+```bash
+php luna make:migration create_users_table
+```
+
+É possível também criar a migration com uma tabela específica:
+
+```bash
+php luna make:migration --table=users add_role_id_column_to_users_table
+```
+
+Para realizar a migração do banco de dados utilize o comando:
+
+```bash
+php luna migrate
+```
+
+Isto irá verificar quais migrações ainda não foram executadas e executa-las.
+
+Para executar uma migração especifica, utilize o comando:
+
+```bash
+php luna migrate {{name}}
+```
+
+Caso precise voltar atrás com a última migração realizada, utilize o comando:
+
+```bash
+php luna migrate:rollback
+```
+
+> Cada execução de `migrate:rollback` retornará um lote, ao executar o último lote será desfeito.
+
+Para limpar o banco de dados e executar as migrações, utilize o comando:
+
+```bash
+php luna migrate:fresh
+```
+
+> Por segurança, é necessário confirmar a execução do `migrate:fresh` com `--confirm` ou `-c`.
+
+### Models
 
 O Model segue o padrão do ORM **Illuminate/Eloquent**:
 
 ```php
 namespace App\Models;
 
-use Luna\Db\Database;
-use Illuminate\Database\Eloquent\Model;
+use Luna\Db\Model;
 
 class Product extends Model {
     // ...
