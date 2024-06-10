@@ -86,11 +86,13 @@ class Migrate {
             $batch = Migration::max('batch');
         }
 
-        self::run($dir);
+        $filenames = self::run($dir);
+        
+        return $filenames;
     }
 
     private static function getMigrationFilenames($dir, $order = 'asc') {
-        $dh = opendir($dir);
+        $dh = opendir(Environment::get('__DIR__') . '/' . $dir);
 
         if(!$dh)
             throw new Exception("Directory not found");
