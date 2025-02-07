@@ -24,6 +24,7 @@ Luna é um framework desenvolvido em PHP com inspirações em outros frameworks 
         -   [Rotas de erros](#rotas-de-erros)
         -   [Rotas de redirecionamento](#rotas-de-redirecionamento)
     -   [Middlewares](#middlewares)
+    -   [Cross-Origin Resource Sharing (CORS)](#cross-origin-resource-sharing-cors)
     -   [Cache](#cache)
     -   [Controllers](#controllers)
         -   [Obtendo dados da requisição](#obtendo-dados-da-requisição)
@@ -246,7 +247,7 @@ Middleware::setDefault([
 ]);
 ```
 
-## CORS
+## Cross-Origin Resource Sharing (CORS)
 
 O CORS pode ser configurado na inicialização da aplicação:
 
@@ -259,6 +260,8 @@ Cors::setHeaders(["*"]); // Headers permitidos
 Cors::setCredentials(true); // Aprovar credenciais
 Cors::setMaxAge(0); // Tempo limite de cache
 ```
+
+O Luna retornará automaticamente as requisições **OPTIONS** com os métodos disponíveis para uma rota.
 
 ## Cache
 
