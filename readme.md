@@ -246,6 +246,20 @@ Middleware::setDefault([
 ]);
 ```
 
+## CORS
+
+O CORS pode ser configurado na inicialização da aplicação:
+
+```php
+use Luna\Http\Cors;
+
+Cors::setOrigins(["*"]); // Origens permitidas
+Cors::setMethods(["*"]); // Métodos permitidos
+Cors::setHeaders(["*"]); // Headers permitidos
+Cors::setCredentials(true); // Aprovar credenciais
+Cors::setMaxAge(0); // Tempo limite de cache
+```
+
 ## Cache
 
 O armazenamento do retorno de rotas em cache reduz o tempo de retorno para futuras requisições da mesma rota:
