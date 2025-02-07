@@ -9,7 +9,7 @@ class Response {
     private $contentType;
     private $content;
 
-    public function send($httpCode, $content, $contentType = false) {
+    public function send($httpCode, $content = null, $contentType = false) {
         $this->httpCode = $httpCode;
         $this->content  = $content;
 
@@ -20,6 +20,8 @@ class Response {
 
         $this->setContentType($contentType);
 
+        Cors::addResponseHeaders($this);
+
         return $this;
     }
 
@@ -29,7 +31,11 @@ class Response {
     }
 
     public function addHeader($key, $value) {
-        $this->headers[$key] = $value;
+        $this->headers[$key] = is_array($value) ? implode(', ', $value) : $value;
+    }
+
+    public function getHeaders() {
+        return $this->headers;
     }
 
     private function sendHeaders() {

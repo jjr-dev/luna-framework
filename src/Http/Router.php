@@ -14,15 +14,15 @@ class Router {
     private $errors = [];
     private $request;
     private $response;
-    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH', 'OPTIONS'];
+    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH'];
 
     public function __construct($url, $dir = false) {  
         if(!$dir) $dir = Environment::get("__DIR__") . '/routes';
 
-        $this->request  = new Request($this);
+        $this->request = new Request($this);
         $this->response = new Response();
-        $this->url      = $url;
-        $this->dir     = $dir;
+        $this->url = $url;
+        $this->dir = $dir;
         $this->setPrefix();
 
         $this->load();
@@ -38,6 +38,21 @@ class Router {
                 include $this->dir . '/' . $file;
         }
         $routerDir->close();
+
+        foreach($this->routes as $route) {
+            $allowedMethods = array_keys($route);
+            $originalRoute = $route[$allowedMethods[0]]['original_route'];
+
+            if (in_array("OPTIONS", $allowedMethods))
+                continue;
+
+            $this->addRoute("OPTIONS", $originalRoute, [
+                function($request, $response) use ($allowedMethods) {
+                    $response->addHeader("Access-Control-Allow-Methods", $allowedMethods);
+                    return $response->send(200);
+                }
+            ]);
+        }
 
         $router->run()->sendResponse();
     }
@@ -70,9 +85,10 @@ class Router {
 
     private function addRoute($method, $route, $params) {
         $params = $this->toggleClosureToController($params);
+        
+        $params['original_route'] = $route;
 
         $params['middlewares'] = $params['middlewares'] ?? [];
-
         $params['variables'] = [];
 
         $patterns = [
@@ -165,7 +181,6 @@ class Router {
 
                     $args[$name] = !empty($value) ? $value : null;
                 }
-                    
             }
 
             $variables = $route['variables'];
