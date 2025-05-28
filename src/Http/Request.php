@@ -34,6 +34,10 @@ class Request {
         $inputRaw = file_get_contents('php://input');
         $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
     }
+    
+    public function setBody($body) {
+        $this->postVars = $body;
+    }
 
     public function addPathParams($key, $value) {
         $this->pathParams[$key] = empty($value) ? null : $value;
