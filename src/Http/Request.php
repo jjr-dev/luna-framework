@@ -58,6 +58,10 @@ class Request {
         $this->body = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->body;
     }
 
+    public function setPathParams($pathParams) {
+        $this->pathParams = $pathParams;
+    }
+
     public function addPathParams($key, $value) {
         $this->pathParams[$key] = empty($value) ? null : $value;
     }
