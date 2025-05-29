@@ -7,17 +7,17 @@ class Request {
     private $router;
     private $pathParams = [];
     private $queryParams = [];
-    private $postVars = [];
+    private $body = [];
     private $headers = [];
 
     public function __construct($router) {
         $this->router       = $router;
-        $this->queryParams  = $_GET ?? [];
-        $this->headers      = getallheaders();
         $this->httpMethod   = $_SERVER['REQUEST_METHOD'] ?? '';
 
         $this->setUri();
-        $this->setPostVars();
+        $this->setBody();
+        $this->setHeaders();
+        $this->setQueryParams();
     }
     
     private function setUri() {
@@ -26,13 +26,40 @@ class Request {
         $this->uri = $xUri[0];
     }
 
-    private function setPostVars() {
+    public function setHeaders($headers = null) {
+        if (isset($headers) && $headers) {
+            $this->headers = $headers;
+            return;
+        }
+        
+        $this->headers = getallheaders();
+    }
+
+    public function setQueryParams($queryParams = null) {
+        if (isset($queryParams) && $queryParams) {
+            $this->queryParams = $queryParams;
+            return;
+        }
+        
+        $this->queryParams = $_GET ?? [];
+    }
+
+    public function setBody($body = null) {
+        if (isset($body) && $body) {
+            $this->body = $body;
+            return;
+        }
+        
         if($this->httpMethod == 'GET') return false;
 
-        $this->postVars = $_POST ?? [];
+        $this->body = $_POST ?? [];
 
         $inputRaw = file_get_contents('php://input');
-        $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
+        $this->body = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->body;
+    }
+
+    public function setPathParams($pathParams) {
+        $this->pathParams = $pathParams;
     }
 
     public function addPathParams($key, $value) {
@@ -57,8 +84,8 @@ class Request {
     }
 
     public function body($key = false) {
-        if(!$key) return $this->postVars;
-        return isset($this->postVars[$key]) ? $this->postVars[$key] : null;
+        if(!$key) return $this->body;
+        return isset($this->body[$key]) ? $this->body[$key] : null;
     }
 
     public function query($key = false) {
