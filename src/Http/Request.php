@@ -34,10 +34,6 @@ class Request {
         $inputRaw = file_get_contents('php://input');
         $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
     }
-    
-    public function setBody($body) {
-        $this->postVars = $body;
-    }
 
     public function addPathParams($key, $value) {
         $this->pathParams[$key] = empty($value) ? null : $value;
@@ -60,9 +56,17 @@ class Request {
         return isset($this->headers[$key]) ? $this->headers[$key] : null;
     }
 
+    public function setHeaders($headers) {
+        $this->headers = $headers;
+    }
+
     public function body($key = false) {
         if(!$key) return $this->postVars;
         return isset($this->postVars[$key]) ? $this->postVars[$key] : null;
+    }
+    
+    public function setBody($body) {
+        $this->postVars = $body;
     }
 
     public function query($key = false) {
@@ -84,8 +88,16 @@ class Request {
         return $value;
     }
 
+    public function setQuery($query) {
+        $this->queryParams = $query;
+    }
+
     public function param($key = false) {
         if(!$key) return $this->pathParams;
         return isset($this->pathParams[$key]) ? $this->pathParams[$key] : null;
+    }
+
+    public function setParam($key, $value) {
+        $this->pathParams[$key] = $value;
     }
 }
