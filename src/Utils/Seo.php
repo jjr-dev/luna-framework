@@ -1,114 +1,167 @@
 <?php
+
 namespace Luna\Utils;
 
 use Luna\Utils\Seo\Twitter;
 use Luna\Utils\Seo\Meta;
-use Luna\Utils\Environment as Env;
+use Luna\Utils\Environment;
 
-class Seo {
-    private $tags = [];
-    private $twitter = false;
-    private $meta = false;
+class Seo
+{
+    private array $tags = [];
+    private $twitter;
+    private $meta;
 
-    public function __construct($opts = []) {
-        if(count($opts) == 0) {
-            $default = Env::get('DEFAULT_SEO');
+    public function __construct(array $opts = [])
+    {
+        if (count($opts) == 0) {
+            $default = Environment::get('DEFAULT_SEO');
             $opts = explode(',', $default);
         }
 
-        if(in_array('twitter', $opts)) $this->twitter();
-        if(in_array('meta', $opts)) $this->meta();
+        if (in_array('twitter', $opts)) {
+            $this->twitter();
+        }
+
+        if (in_array('meta', $opts)) {
+            $this->meta();
+        }
     }
     
-    public function setRobots($index = true, $follow = true) {
+    public function setRobots(bool $index = true, bool $follow = true): void
+    {
         $index = $index ? "index" : "noindex";
         $follow = $follow ? "follow" : "nofollow";
 
         $this->tags['robots'] = "{$index},{$follow}";
     }
 
-    public function setTitle($title) {
+    public function setTitle(?string $title): void
+    {
         $this->tags['title'] = $title;
 
-        if($this->twitter && !$this->twitter->hasTitle()) $this->twitter->setTitle($title);
-        if($this->meta && !$this->meta->hasTitle()) $this->meta->setTitle($title);
+        if ($this->twitter && !$this->twitter->hasTitle()) {
+            $this->twitter->setTitle($title);
+        }
+
+        if ($this->meta && !$this->meta->hasTitle()) {
+            $this->meta->setTitle($title);
+        }
     }
 
-    public function setImage($image) {
+    public function setImage(?string $image): void
+    {
         $this->tags['image'] = $image;
 
-        if($this->twitter && !$this->twitter->hasImage()) $this->twitter->setImage($image);
-        if($this->meta && !$this->meta->hasImage()) $this->meta->setImage($image);
+        if ($this->twitter && !$this->twitter->hasImage()) {
+            $this->twitter->setImage($image);
+        }
+
+        if ($this->meta && !$this->meta->hasImage()) {
+            $this->meta->setImage($image);
+        }
     }
 
-    public function setDescription($description) {
+    public function setDescription(?string $description): void
+    {
         $this->tags['description'] = $description;
 
-        if($this->twitter && !$this->twitter->hasDescription()) $this->twitter->setDescription($description);
-        if($this->meta && !$this->meta->hasDescription()) $this->meta->setDescription($description);
+        if ($this->twitter && !$this->twitter->hasDescription()) {
+            $this->twitter->setDescription($description);
+        }
+
+        if ($this->meta && !$this->meta->hasDescription()) {
+            $this->meta->setDescription($description);
+        }
     }
 
-    public function setKeywords($keys) {
-        $this->tags['keywords'] = gettype($keys) == 'string' ? $keys : implode(', ', $keys);
+    public function setKeywords(array|string|null $keys): void
+    {
+        $this->tags['keywords'] = is_array($keys) ? implode(', ', $keys) : $keys;
     }
 
-    public function setAuthor($author) {
+    public function setAuthor(?string $author): void
+    {
         $this->tags['author'] = $author;
     }
 
-    public function twitter($preConfigs = true) {
-        if(!$this->twitter) {
+    public function twitter(bool $preConfigs = true): object
+    {
+        if (!$this->twitter) {
             $this->twitter = new Twitter();
 
-            if($preConfigs)
+            if ($preConfigs) {
                 $this->setPreConfigs($this->twitter);
+            }
         };
 
         return $this->twitter;
     }
 
-    public function meta($preConfigs = true) {
-        if(!$this->meta) {
+    public function meta(bool $preConfigs = true): object
+    {
+        if (!$this->meta) {
             $this->meta = new Meta();
 
-            if($preConfigs)
+            if ($preConfigs) {
                 $this->setPreConfigs($this->meta);
+            }
         };
         
         return $this->meta;
     }
 
-    private function setPreConfigs($local) {
-        if(isset($this->tags['title'])) $local->setTitle($this->tags['title']);
-        if(isset($this->tags['description'])) $local->setDescription($this->tags['description']);
-        if(isset($this->tags['image'])) $local->setImage($this->tags['image']);
+    private function setPreConfigs($local): void
+    {
+        if (isset($this->tags['title'])) {
+            $local->setTitle($this->tags['title']);
+        }
+
+        if (isset($this->tags['description'])) {
+            $local->setDescription($this->tags['description']);
+        }
+
+        if (isset($this->tags['image'])) {
+            $local->setImage($this->tags['image']);
+        }
     }
 
-    public function render($withTitle = false) {
+    public function render(bool $withTitle = false): string
+    {
         $tags = "";
 
-        if(isset($this->tags['title'])) {
-            if($withTitle) $tags .= "<title>{$this->tags['title']}</title>\n";
+        if (isset($this->tags['title'])) {
+            if ($withTitle) {
+                $tags .= "<title>{$this->tags['title']}</title>\n";
+            }
+            
             unset($this->tags['title']);
         }
         
         $tags .= $this->renderTags("name", "", $this->tags);
 
-        if($this->twitter)
+        if ($this->twitter) {
             $tags .= $this->renderTags("name", "twitter", $this->twitter->getTags());
+        }
 
-        if($this->meta)
+        if ($this->meta) {
             $tags .= $this->renderTags("property", "og", $this->meta->getTags());
+        }
 
         return $tags;
     }
 
-    private function renderTags($key, $prefix, $tags) {
+    private function renderTags(string $key, string $prefix, array $tags): string
+    {
         $template = "<meta {$key}='{{tag}}' content='{{content}}'>\n";
 
         $rendered = [];
-        foreach($tags as $tag => $content) {
-            if($prefix) $tag = $prefix . ":" . $tag;
+        
+        foreach ($tags as $tag => $content) {
+            if ($prefix) {
+                $tag = $prefix . ":" . $tag;
+            }
+
             array_push($rendered, str_replace(['{{tag}}', '{{content}}'], [$tag, $content], $template));
         }
         

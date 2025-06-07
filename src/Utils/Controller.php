@@ -1,24 +1,33 @@
 <?php
+
 namespace Luna\Utils;
 
-class Controller {
-    private static function getComponent($type, $file) {
-        if($file === false) return '';
+class Controller
+{
+    private static function getComponent(string $type, string|bool $file): string
+    {
+        if ($file === false) {
+            return '';
+        }
         
-        if(!$file) $file = $type;
+        if (!$file) {
+            $file = $type;
+        }
+        
         return View::render($file);
     }
     
-    public static function page($title, $content, $opts = []) {
+    public static function page(string $title, string $content, array $opts = []): string
+    {
         $header = 'header';
         $footer = 'footer';
         
-        if(isset($opts['header'])) {
+        if (isset($opts['header'])) {
             $header = $opts['header'];
             unset($opts['header']);
         }
 
-        if(isset($opts['footer'])) {
+        if (isset($opts['footer'])) {
             $footer = $opts['footer'];
             unset($opts['footer']);
         }
@@ -34,11 +43,21 @@ class Controller {
         ));
     }
 
-    public static function success($data = [], $code = 200) {
-        return ['data' => $data, 'status' => $code, 'error' => false];
+    public static function success(array $data = [], int $code = 200)
+    {
+        return [
+            'data' => $data,
+            'status' => $code ?: 200,
+            'error' => false
+        ];
     }
 
-    public static function error($data = [], $code = 400) {
-        return ['data' => $data, 'status' => $code ?: 400, 'error' => true];
+    public static function error(array $data = [], int $code = 400)
+    {
+        return [
+            'data' => $data,
+            'status' => $code ?: 400,
+            'error' => true
+        ];
     }
 }
