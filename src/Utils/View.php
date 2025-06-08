@@ -67,7 +67,7 @@ class View
         $matches = $matches[0];
         
         $coalescences = [];
-        foreach($matches as $item) {
+        foreach ($matches as $item) {
             $item = substr($item, 2, -2);
 
             list($key, $value) = explode("??", $item, 2);

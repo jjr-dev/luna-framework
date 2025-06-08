@@ -1,18 +1,21 @@
 <?php
+
 namespace Luna\Http;
 
-class Request {
-    private $httpMethod;
-    private $uri;
-    private $router;
-    private $pathParams = [];
-    private $queryParams = [];
-    private $body = [];
-    private $headers = [];
+class Request
+{
+    private string $httpMethod;
+    private string $uri;
+    private object $router;
+    private ?array $body = [];
+    private ?array $headers = [];
+    private ?array $pathParams = [];
+    private ?array $queryParams = [];
 
-    public function __construct($router) {
-        $this->router       = $router;
-        $this->httpMethod   = $_SERVER['REQUEST_METHOD'] ?? '';
+    public function __construct(object $router)
+    {
+        $this->router = $router;
+        $this->httpMethod = $_SERVER['REQUEST_METHOD'] ?? '';
 
         $this->setUri();
         $this->setBody();
@@ -20,13 +23,15 @@ class Request {
         $this->setQueryParams();
     }
     
-    private function setUri() {
+    private function setUri(): void
+    {
         $uri = $_SERVER['REQUEST_URI'] ?? '';
         $xUri = preg_split("/[?#]/", $uri);
         $this->uri = $xUri[0];
     }
 
-    public function setHeaders($headers = null) {
+    public function setHeaders(?array $headers = null): void
+    {
         if (isset($headers) && $headers) {
             $this->headers = $headers;
             return;
@@ -35,7 +40,8 @@ class Request {
         $this->headers = getallheaders();
     }
 
-    public function setQueryParams($queryParams = null) {
+    public function setQueryParams(?array $queryParams = null): void
+    {
         if (isset($queryParams) && $queryParams) {
             $this->queryParams = $queryParams;
             return;
@@ -44,13 +50,16 @@ class Request {
         $this->queryParams = $_GET ?? [];
     }
 
-    public function setBody($body = null) {
+    public function setBody(?array $body = null): void
+    {
         if (isset($body) && $body) {
             $this->body = $body;
             return;
         }
         
-        if($this->httpMethod == 'GET') return false;
+        if ($this->httpMethod === 'GET') {
+            return;
+        }
 
         $this->body = $_POST ?? [];
 
@@ -58,57 +67,94 @@ class Request {
         $this->body = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->body;
     }
 
-    public function setPathParams($pathParams) {
+    public function setPathParams(?array $pathParams): void
+    {
         $this->pathParams = $pathParams;
     }
 
-    public function addPathParams($key, $value) {
+    public function addPathParams(string $key, $value): void
+    {
         $this->pathParams[$key] = empty($value) ? null : $value;
     }
 
-    public function getRouter() {
+    public function getRouter(): object
+    {
         return $this->router;
     }
 
-    public function getHttpMethod() {
+    public function getHttpMethod(): string
+    {
         return $this->httpMethod;
     }
 
-    public function getUri() {
+    public function getUri(): string
+    {
         return $this->uri;
     }
 
-    public function header($key = false) {
-        if(!$key) return $this->headers;
-        return isset($this->headers[$key]) ? $this->headers[$key] : null;
-    }
+    public function header(?string $key = null)
+    {
+        if (!$key) {
+            return $this->headers;
+        }
 
-    public function body($key = false) {
-        if(!$key) return $this->body;
-        return isset($this->body[$key]) ? $this->body[$key] : null;
-    }
-
-    public function query($key = false) {
-        if(!$key)
-            return $this->queryParams;
-
-        if (!isset($this->queryParams[$key]))
+        if (!isset($this->headers[$key])) {
             return null;
+        }
+
+        return $this->headers[$key];
+    }
+
+    public function body(?string $key = null)
+    {
+        if (!$key) {
+            return $this->body;
+        }
+
+        if (!isset($this->body[$key])) {
+            return null;
+        }
+
+        return $this->body[$key];
+    }
+
+    public function query(?string $key = null)
+    {
+        if (!$key) {
+            return $this->queryParams;
+        }
+
+        if (!isset($this->queryParams[$key])) {
+            return null;
+        }
 
         $value = $this->queryParams[$key];
         
-        if(is_string($value)) {
+        if (is_string($value)) {
             $boolVerify = strtolower($value);
             
-            if($boolVerify === 'true') $value = true;
-            if($boolVerify === 'false') $value = false;
+            if ($boolVerify === 'true') {
+                $value = true;
+            }
+            
+            if ($boolVerify === 'false') {
+                $value = false;
+            }
         }
         
         return $value;
     }
 
-    public function param($key = false) {
-        if(!$key) return $this->pathParams;
-        return isset($this->pathParams[$key]) ? $this->pathParams[$key] : null;
+    public function param(?string $key = null)
+    {
+        if (!$key) {
+            return $this->pathParams;
+        }
+
+        if (!isset($this->pathParams[$key])) {
+            return null;
+        }
+
+        return $this->pathParams[$key];
     }
 }

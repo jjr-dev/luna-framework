@@ -26,7 +26,7 @@ class Component
     {
         $contentComponents = [];
 
-        foreach($vars as $var) {
+        foreach ($vars as $var) {
             $contentComponents[] = self::render($component, $var);
         }
         

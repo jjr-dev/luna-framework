@@ -31,7 +31,7 @@ class Pagination
     private function setList(array $list): void
     {
         $this->total = count($list);
-        $this->list  = $list;
+        $this->list = $list;
         $this->pages = intval(ceil($this->total / $this->limit));
     }
 
@@ -45,9 +45,9 @@ class Pagination
     {
         return [
             'count' => $this->count,
-            'list'  => $this->paged,
+            'list' => $this->paged,
             'pages' => $this->pages,
-            'page'  => $this->page,
+            'page' => $this->page,
             'limit' => $this->limit,
             'total' => $this->total
         ];
