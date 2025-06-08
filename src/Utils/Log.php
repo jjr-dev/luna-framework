@@ -1,11 +1,12 @@
 <?php
+
 namespace Luna\Utils;
 
-use Luna\Db\Log as LogModel;
-
-class Log {
-    public static function save($message, $code = null) {
-        $log = new LogModel();
+class Log
+{
+    public static function save(string $message, string|int|null $code = null): string
+    {
+        $log = new \Luna\Db\Log();
 
         $publicId = uniqid();
 

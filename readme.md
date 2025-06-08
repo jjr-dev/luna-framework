@@ -78,14 +78,13 @@ Caso prefira, duplique o arquivo e mantenha o `.env.example` para que versione o
 A criação de rota deve ser realizada em algum arquivo do diretório `/routes` (levando em consideração que você está seguindo o padrão apresentado aqui). É possível criar arquivos de separação, como `pages.php` para rotas de páginas ou `api.php` para rotas da API:
 
 ```php
-<?php
-    use App\Controllers\Pages;
+use App\Controllers\Pages;
 
-    $router->get('/', [
-        function($request, $response) {
-            return Pages\Home::homePage($request, $response);
-        }
-    ]);
+$router->get('/', [
+    function($request, $response) {
+        return Pages\HomeController::show($request, $response);
+    }
+]);
 ```
 
 ### Métodos de rota disponíveis
@@ -113,7 +112,7 @@ As rotas podem receber parâmetros personalizados:
 ```php
 $router->get('/products/{id}', [
     function($request, $response) {
-        return Pages\Product::getPage($request, $response);
+        return Pages\ProductController::show($request, $response);
     }
 ]);
 ```
@@ -121,8 +120,9 @@ $router->get('/products/{id}', [
 Os parâmetros podem ser obtidos na função executada:
 
 ```php
-class Product extends Page {
-    public static function getPage($request, $response) {
+class ProductController extends Page
+{
+    public static function show(Request $request, Response $response) {
         $id = $req->param('id');
     }
 }
@@ -132,13 +132,14 @@ Caso prefira, também é possível obter os parâmetros da URL através de uma v
 
 ```php
 $router->get('/products/{id}', [
-    function($id, $request, $response) {
-        return Pages\Product::getPage($id, $request, $response);
+    function(int $id, Request $request, Response $response) {
+        return Pages\ProductController::show($id, $request, $response);
     }
 ]);
 
-class Product extends Page {
-    public static function getPage($id, $request, $response) {
+class ProductController extends Page
+{
+    public static function show(int $id, Request $request, Response $response) {
         // ...
     }
 }
@@ -169,11 +170,13 @@ $router->get('/product/{id}/{slug?}', [
 Alguns erros comuns podem ser tratados diretamente na definição da rota para personalizar a página de retorno:
 
 ```php
-use \App\Controllers\Errors;
+use App\Controllers\Pages\Errors;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
 $router->error(404, [
     function($request, $response) {
-        return Errors\PageNotFound::getPage($request, $response);
+        return Errors\NotFoundController::show(Request $request, Response $response);
     }
 ]);
 ```
@@ -183,7 +186,7 @@ Também é possível definir uma rota padrão para qualquer erro:
 ```php
 $router->error('default', [
     function($request, $response) {
-        return Errors\General::getPage($request, $response);
+        return Errors\General::show(Request $request, Response $response);
     }
 ]);
 ```
@@ -304,8 +307,13 @@ As rotas executam (em sua maioria) Controllers:
 ```php
 namespace App\Controllers;
 
-class Product {
-    public static function productPage($request, $response) {
+use Luna\Http\Request;
+use Luna\Http\Response;
+
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
     }
 }
@@ -332,8 +340,11 @@ $request->getHttpMethod(); // Obter método HTTP
 Toda requisição deve ser respondida e sua resposta deve ser realizada no `return` da função do Controller:
 
 ```php
-class Product {
-    public static function productPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
+        // ...
         return $response->send(200, "Sucesso");
     }
 }
@@ -346,9 +357,12 @@ class Product {
 As respostas da requisição podem retornar valores em `text/html`, `application/json` (mais comuns) ou outros (menos comuns):
 
 ```php
-public static function getProduct($request, $response) {
+public static function show(Request $request, Response $response)
+{
     // ...
-    return $response->send(200, ["data" => "Sucesso"], "application/json");
+    return $response->send(200, [
+        "data" => "Sucesso"
+    ], "application/json");
 }
 ```
 
@@ -368,8 +382,10 @@ Os Services auxiliam na obtenção e tratamento de dados entre o Banco de Dados 
 ```php
 namespace App\Services;
 
-class Product {
-    public static function find($id) {
+class ProductService
+{
+    public static function find(int $id)
+    {
         // ...
     }
 }
@@ -378,12 +394,15 @@ class Product {
 Uso do service:
 
 ```php
-use App\Services\Product as ProductService;
+use App\Services\ProductService;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function getProduct($request, $response) {
-        $id = $request->param("id");
-        $product = ProductService::find($id);
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
+        $product = ProductService::find($request->param("id"));
         return $response->send(200, $product);
     }
 }
@@ -396,8 +415,10 @@ Um Helper agrupa pequenas funções úteis e que não são definidas como Servic
 ```php
 namespace App\Helpers;
 
-class Uuid {
-    public function generate() {
+class UuidHelper
+{
+    public function generate()
+    {
         // ...
     }
 }
@@ -406,10 +427,12 @@ class Uuid {
 Uso do Helper:
 
 ```php
-use App\Helpers\Uuid as UuidHelper;
+use App\Helpers\UuidHelper;
 
-class User {
-    public function find($id) {
+class UserService
+{
+    public function generateUuid()
+    {
         return UuidHelper::generate();
     }
 }
@@ -423,13 +446,18 @@ As views podem ser criadas em `resources/views` em `.html` e utilizadas na rende
 namespace App\Controllers\Pages;
 
 use Luna\Utils\View;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function productPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         $content = View::render('pages/product', [
             'name' => "Produto nome",
             'description' => "Produto descrição"
         ]);
+
         return $response->send(200, $content);
     }
 }
@@ -485,13 +513,18 @@ A classe `Page` possui funções que permitem padronizar as páginas com `header
 namespace App\Controllers\Pages;
 
 use Luna\Utils\View;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product extends Page {
-    public static function productPage($request, $response) {
+class ProductController extends Page
+{
+    public static function show(Request $request, Response $response)
+    {
         $content = View::render('pages/product', [
             'name' => "Produto nome",
             'description' => "Produto descrição"
         ]);
+
         $content = parent::getPage("Produto Título", $content);
 
         return $response->send(200, $content);
@@ -531,9 +564,13 @@ A Flash Message pode ser utilizada para retornar mensagens para a view de forma 
 namespace App\Controllers\Pages;
 
 use Luna\Utils\Flash;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function productPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
         Flash::create("productNotFound", "Produto não encontrado", 'error');
     }
@@ -590,9 +627,13 @@ Pequenas estruturas de uma view que sejam repetidas (ou não) podem ser utilizad
 namespace App\Controllers\Pages;
 
 use Luna\Utils\Component;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function productsPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
         $productCard = Component::render('product-card', $product);
         $content = View::render('pages/product', ['productCard' => $productCard]);
@@ -621,9 +662,13 @@ A paginação de `arrays` para listagem pode ser realizada com uso da classe `Pa
 namespace App\Controllers\Pages;
 
 use Luna\Utils\Pagination;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function productsPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
         $pagination = new Pagination($products, $page, $limit);
         $products = $pagination->get();
@@ -652,9 +697,13 @@ O controle da paginação pode ser renderizado para ser exibido na View:
 namespace App\Controllers\Pages;
 
 use Luna\Utils\Pagination;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function productsPage($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
         $pagination = new Pagination($products, $page, $limit);
         $paginationRender = $pagination->render($req);
@@ -769,7 +818,8 @@ namespace App\Models;
 
 use Luna\Db\Model;
 
-class Product extends Model {
+class Product extends Model
+{
     // ...
 }
 ```
@@ -781,9 +831,10 @@ namespace App\Services;
 
 use App\Models\Product;
 
-class Product {
-    public function find() {
-        return Product::find(1);
+class ProductService
+{
+    public function find(int $id) {
+        return Product::find($id);
     }
 
     public function list() {
@@ -800,9 +851,13 @@ O **Search Engine Optimization** (SEO) pode ser criado para exibição na View:
 namespace App\Controllers;
 
 use Luna\Utils\Seo;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
-class Product {
-    public static function getProduct($request, $response) {
+class ProductController
+{
+    public static function show(Request $request, Response $response)
+    {
         // ...
         $seo = new Seo();
         $seo->setTitle("Produto nome");

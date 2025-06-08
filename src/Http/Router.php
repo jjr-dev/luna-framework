@@ -1,23 +1,31 @@
 <?php
+
 namespace Luna\Http;
 
 use Closure;
 use Exception;
+use Luna\Enums\HttpMethods;
 use ReflectionFunction;
 use Luna\Utils\Environment;
 
-class Router {
-    private $url;
-    private $prefix;
-    private $dir;
-    private $routes = [];
-    private $errors = [];
-    private $request;
-    private $response;
-    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATH'];
+class Router
+{
+    private string $url;
+    private string $prefix;
+    private string $dir;
+    private Request $request;
+    private Response $response;
+    private array $routes = [];
+    private array $errors = [];
+    private array $methods = [];
 
-    public function __construct($url, $dir = false) {  
-        if(!$dir) $dir = Environment::get("__DIR__") . '/routes';
+    public function __construct(string $url, ?string $dir = null)
+    {  
+        if (!$dir) {
+            $dir = Environment::get("__DIR__") . '/routes';
+        }
+
+        $this->methods = HttpMethods::cases();
 
         $this->request = new Request($this);
         $this->response = new Response();
@@ -28,26 +36,32 @@ class Router {
         $this->load();
     }
 
-    public function load() {
+    public function load()
+    {
         $router = $this;
         
         $routerDir = dir($this->dir);
-        while(($file = $routerDir->read()) !== false) {
+
+        while (($file = $routerDir->read()) !== false) {
             $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-            if($ext === 'php')
+            
+            if ($ext === 'php') {
                 include $this->dir . '/' . $file;
+            }
         }
+
         $routerDir->close();
 
-        foreach($this->routes as $route) {
+        foreach ($this->routes as $route) {
             $allowedMethods = array_keys($route);
             $originalRoute = $route[$allowedMethods[0]]['original_route'];
 
-            if (in_array("OPTIONS", $allowedMethods))
+            if (in_array("OPTIONS", $allowedMethods)) {
                 continue;
+            }
 
             $this->addRoute("OPTIONS", $originalRoute, [
-                function($request, $response) use ($allowedMethods) {
+                function($_, $response) use ($allowedMethods) {
                     $response->addHeader("Access-Control-Allow-Methods", $allowedMethods);
                     return $response->send(200);
                 }
@@ -57,15 +71,18 @@ class Router {
         $router->run()->sendResponse();
     }
 
-    private function setPrefix() {
+    private function setPrefix(): void
+    {
         $parseUrl = parse_url($this->url);
         $this->prefix = $parseUrl['path'] ?? '';
     }
 
-    private function toggleClosureToController($params) {
-        foreach($params as $key => $value) {
-            if($value instanceof Closure) {
+    private function toggleClosureToController(array $params): array
+    {
+        foreach ($params as $key => $value) {
+            if ($value instanceof Closure) {
                 $params['controller'] = $value;
+                
                 unset($params[$key]);
                 continue;
             }
@@ -74,7 +91,8 @@ class Router {
         return $params;
     }
 
-    private function addError($error, $params) {
+    private function addError(string $error, array $params): void
+    {
         $params = $this->toggleClosureToController($params);
 
         $params['middlewares'] = $params['middlewares'] ?? [];
@@ -83,7 +101,8 @@ class Router {
         $this->errors[$error] = $params;
     }
 
-    private function addRoute($method, $route, $params) {
+    private function addRoute(string $method, string $route, array $params): void
+    {
         $params = $this->toggleClosureToController($params);
         
         $params['original_route'] = $route;
@@ -93,10 +112,11 @@ class Router {
 
         $patterns = [
             '/{([^\/.]*)\?}/' => '?([^/.]*)?',
-            '/{([^\/.]*)}/'   => '([^/.]*)'
+            '/{([^\/.]*)}/' => '([^/.]*)'
         ];
-        foreach($patterns as $pattern => $replace) {
-            if(preg_match_all($pattern, $route, $matches)) {
+        
+        foreach ($patterns as $pattern => $replace) {
+            if (preg_match_all($pattern, $route, $matches)) {
                 $route = preg_replace($pattern, $replace, $route);
                 $params['variables'] = array_merge($matches[1], $params['variables']);
             }
@@ -104,19 +124,22 @@ class Router {
 
         $route = rtrim($route, '/');
 
-        if(isset($params['cache']) && $params['cache']) {
-            if(gettype($params['cache']) === 'boolean')
+        if (isset($params['cache']) && $params['cache']) {
+            if (gettype($params['cache']) === 'boolean') {
                 $params['cache'] = Environment::get('CACHE_TIME');
+            }
 
-            if(!in_array('cache', $params['middlewares']))
+            if (!in_array('cache', $params['middlewares'])) {
                 $params['middlewares'][] = 'cache';
+            }
         }
 
         $patternRoute = '/^' . str_replace('/', '\/', $route) . '$/';
         $this->routes[$patternRoute][$method] = $params;
     }
 
-    public function getUri() {
+    public function getUri(): string
+    {
         $uri = $this->request->getUri();
         $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
         $uri = end($xUri);
@@ -124,26 +147,30 @@ class Router {
         return rtrim($uri, '/');
     }
 
-    public function getCacheTime() {
+    public function getCacheTime(): int|string
+    {
         $route = $this->getRoute();
         return $route['cache'];
     }
 
-    private function getRoute() {
+    private function getRoute(): string|array
+    {
         $uri = $this->getUri();
         $httpMethod = $this->request->getHttpMethod();
 
-        foreach($this->routes as $patternRoute => $methods) {
-            if(preg_match($patternRoute, $uri, $matches)) {
-                if(isset($methods[$httpMethod])) {
+        foreach ($this->routes as $patternRoute => $methods) {
+            if (preg_match($patternRoute, $uri, $matches)) {
+                if (isset($methods[$httpMethod])) {
                     unset($matches[0]);
+                    
                     $keys = $methods[$httpMethod]['variables'];
                     $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
-                    $methods[$httpMethod]['variables']['request']  = $this->request;
+                    $methods[$httpMethod]['variables']['request'] = $this->request;
                     $methods[$httpMethod]['variables']['response'] = $this->response;
 
-                    if(!isset($methods[$httpMethod]['controller']))
+                    if (!isset($methods[$httpMethod]['controller'])) {
                         return $this->getError(500, 'URL ' . $uri . ' não pôde ser processada');
+                    }
 
                     return $methods[$httpMethod];
                 }
@@ -155,9 +182,11 @@ class Router {
         return $this->getError(404, 'URL ' . $uri . ' não encontrada');
     }
 
-    private function getError($code, $message) {
-        if(!isset($this->errors[$code]) && !isset($this->errors['default']))
+    private function getError(int $code, string $message): array
+    {
+        if (!isset($this->errors[$code]) && !isset($this->errors['default'])) {
             throw new Exception($message, $code);
+        }
 
         $error = $this->errors[isset($this->errors[$code]) ? $code : 'default'];        
 
@@ -167,16 +196,18 @@ class Router {
         return $error;
     }
 
-    public function run() {
+    public function run()
+    {
         try {
             $route = $this->getRoute();
 
             $args = [];
             $reflection = new ReflectionFunction($route['controller']);
-            foreach($reflection->getParameters() as $parameter) {
+            
+            foreach ($reflection->getParameters() as $parameter) {
                 $name = $parameter->getName();
 
-                if(isset($route['variables'][$name])) {
+                if (isset($route['variables'][$name])) {
                     $value = $route['variables'][$name];
 
                     $args[$name] = !empty($value) ? $value : null;
@@ -184,68 +215,83 @@ class Router {
             }
 
             $variables = $route['variables'];
-            foreach($variables as $key => $value) {
-                if(!in_array($key, ['request', 'response']))
+            
+            foreach ($variables as $key => $value) {
+                if (!in_array($key, ['request', 'response'])) {
                     $this->request->addPathParams($key, $value);
+                }
             }
 
-            return (new Middleware($route['middlewares'], $route['controller'], $args))->next($this->request, $this->response);
+            return (
+                new Middleware(
+                    $route['middlewares'],
+                    $route['controller'],
+                    $args
+                )
+            )->next($this->request, $this->response);
         } catch(Exception $e) {
             return (new Response())->send($e->getCode(), $e->getMessage());
         }
     }
 
-    public function redirect($route) {
+    public function redirect(string $route)
+    {
         header('location: ' . $this->url . $route);
         exit;
     }
 
-    public function get($route, $params = []) {
-        return $this->addRoute("GET", $route, $params);
+    public function get(string $route, array $params = []): void
+    {
+        $this->addRoute("GET", $route, $params);
     }
 
-    public function post($route, $params = []) {
-        return $this->addRoute("POST", $route, $params);
+    public function post(string $route, array $params = []): void
+    {
+        $this->addRoute("POST", $route, $params);
     }
 
-    public function put($route, $params = []) {
-        return $this->addRoute("PUT", $route, $params);
+    public function put(string $route, array $params = []): void
+    {
+        $this->addRoute("PUT", $route, $params);
     }
 
-    public function patch($route, $params = []) {
-        return $this->addRoute("PATCH", $route, $params);
+    public function patch(string $route, array $params = []): void
+    {
+        $this->addRoute("PATCH", $route, $params);
     }
 
-    public function options($route, $params = []) {
-        return $this->addRoute("OPTIONS", $route, $params);
+    public function options(string $route, array $params = []): void
+    {
+        $this->addRoute("OPTIONS", $route, $params);
     }
 
-    public function delete($route, $params = []) {
-        return $this->addRoute("DELETE", $route, $params);
+    public function delete(string $route, array $params = []): void
+    {
+        $this->addRoute("DELETE", $route, $params);
     }
 
-    public function error($error, $params = []) {
-        return $this->addError($error, $params);
+    public function error(string $error, array $params = []): void
+    {
+        $this->addError($error, $params);
     }
 
-    public function match($methods, $route, $params = []) {
-        foreach($methods as $method) {
+    public function any(string $route, array $params = []): void
+    {
+        foreach ($this->methods as $method) {
+            $this->addRoute($method->value, $route, $params);
+        };
+    }
+    
+    public function match(array $methods, string $route, array $params = []): void
+    {
+        foreach ($methods as $method) {
             $method = strtoupper($method);
             
-            if(!in_array($method, $this->methods))
+            if (!HttpMethods::exists($method)) {
                 continue;
-                
+            }
+
             $this->addRoute($method, $route, $params);
         };
-
-        return;
-    }
-
-    public function any($route, $params = []) {
-        foreach($this->methods as $method) {
-            $this->addRoute($method, $route, $params);
-        };
-
-        return;
     }
 }

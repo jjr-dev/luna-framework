@@ -1,23 +1,33 @@
 <?php
+
 namespace Luna\Middlewares;
 
-use Luna\Utils\Environment as Env;
-use Luna\Utils\Cache\File as CacheFile;
+use Luna\Http\Request;
+use Luna\Http\Response;
+use Luna\Utils\Environment;
+use Luna\Utils\Cache\File;
 
-class Cache {
-    private function isCacheable($request) {
-        if($request->getHttpMethod() != "GET") return false;
+class Cache
+{
+    private function isCacheable(Request $request)
+    {
+        if ($request->getHttpMethod() !== "GET") {
+            return false;
+        }
 
-        if(Env::get('ALLOW_NO_CACHE_HEADER')) {
+        if (Environment::get('ALLOW_NO_CACHE_HEADER')) {
             $cacheControl = $request->header('Cache-Control');
 
-            if($cacheControl && $cacheControl == 'no-cache') return false;
+            if ($cacheControl && $cacheControl === 'no-cache') {
+                return false;
+            }
         }
 
         return true;
     }
 
-    private function getHash($request) {
+    private function getHash(Request $request)
+    {
         $uri = $request->getRouter()->getUri();
 
         $queryParams = $request->query();
@@ -26,14 +36,17 @@ class Cache {
         return rtrim('route-' . preg_replace('/[^0-9a-zA-Z]/', '-', ltrim($uri, '/')), '-');
     }
 
-    public function handle($request, $response, $next) {
-        if(!$this->isCacheable($request)) return $next($request, $response);
+    public function handle(Request $request, Response $response, callable $next)
+    {
+        if (!$this->isCacheable($request)) {
+            return $next($request, $response);
+        }
 
         $hash = $this->getHash($request);
 
         $cacheTime = $request->getRouter()->getCacheTime();
 
-        return CacheFile::getCache($hash, $cacheTime, function() use($request, $response, $next) {
+        return File::getCache($hash, $cacheTime, function() use($request, $response, $next) {
             return $next($request, $response);
         });
     }

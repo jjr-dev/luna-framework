@@ -1,22 +1,35 @@
 <?php
+
 namespace Luna\Utils;
 
-class Component {
-    private static function getContentComponent($component) {
+class Component
+{
+    private static function getContentComponent(string $component): string
+    {
         $file = Environment::get("__DIR__") . '/resources/components/' . $component . '.html';
-        return file_exists($file) ? file_get_contents($file) : '';
+
+        if (!file_exists($file)) {
+            return "";
+        }
+        
+        return file_get_contents($file);
     }
     
-    public static function render($component, $vars = []) {
+    public static function render(string $component, array $vars = []): string
+    {
         $contentComponent = self::getContentComponent($component);
+        
         return View::render(false, $vars, $contentComponent);
     }
 
-    public static function multiRender($component, $vars = []) {
+    public static function multiRender(string $component, array $vars = []): array|string
+    {
         $contentComponents = [];
-        foreach($vars as $var) {
+
+        foreach ($vars as $var) {
             $contentComponents[] = self::render($component, $var);
         }
+        
         return $contentComponents ? implode("", $contentComponents) : [];
     }
 }
