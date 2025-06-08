@@ -170,7 +170,7 @@ $router->get('/product/{id}/{slug?}', [
 Alguns erros comuns podem ser tratados diretamente na definição da rota para personalizar a página de retorno:
 
 ```php
-use \App\Controllers\Errors;
+use App\Controllers\Pages\Errors;
 use Luna\Http\Request;
 use Luna\Http\Response;
 
