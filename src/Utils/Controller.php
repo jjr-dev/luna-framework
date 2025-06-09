@@ -21,6 +21,7 @@ class Controller
     {
         $header = 'header';
         $footer = 'footer';
+        $page = 'page';
         
         if (isset($opts['header'])) {
             $header = $opts['header'];
@@ -32,7 +33,12 @@ class Controller
             unset($opts['footer']);
         }
 
-        return View::render('page', array_merge(
+        if (isset($opts['page'])) {
+            $page = $opts['page'];
+            unset($opts['page']);
+        }
+
+        return View::render($page, array_merge(
             [
                 'title' => $title,
                 'header' => self::getComponent('header', $header),

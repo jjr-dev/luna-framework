@@ -79,9 +79,11 @@ A criação de rota deve ser realizada em algum arquivo do diretório `/routes` 
 
 ```php
 use App\Controllers\Pages;
+use Luna\Http\Request;
+use Luna\Http\Response;
 
 $router->get('/', [
-    function($request, $response) {
+    function(Request $request, Response $response) {
         return Pages\HomeController::show($request, $response);
     }
 ]);
@@ -111,7 +113,7 @@ As rotas podem receber parâmetros personalizados:
 
 ```php
 $router->get('/products/{id}', [
-    function($request, $response) {
+    function(Request $request, Response $response) {
         return Pages\ProductController::show($request, $response);
     }
 ]);
@@ -132,14 +134,14 @@ Caso prefira, também é possível obter os parâmetros da URL através de uma v
 
 ```php
 $router->get('/products/{id}', [
-    function(int $id, Request $request, Response $response) {
+    function(int|string $id, Request $request, Response $response) {
         return Pages\ProductController::show($id, $request, $response);
     }
 ]);
 
 class ProductController extends Page
 {
-    public static function show(int $id, Request $request, Response $response) {
+    public static function show(int|string $id, Request $request, Response $response) {
         // ...
     }
 }
@@ -151,13 +153,13 @@ Os parâmetros opcionais podem ser criados utilizando `?`:
 
 ```php
 $router->get('/cart/{id?}', [
-    function($request, $response) {
+    function(Request $request, Response $response) {
         // ...
     }
 ]);
 
 $router->get('/product/{id}/{slug?}', [
-    function($request, $response) {
+    function(Request $request, Response $response) {
         // ...
     }
 ]);
@@ -175,8 +177,8 @@ use Luna\Http\Request;
 use Luna\Http\Response;
 
 $router->error(404, [
-    function($request, $response) {
-        return Errors\NotFoundController::show(Request $request, Response $response);
+    function(Request $request, Response $response) {
+        return Errors\NotFoundController::show($request, $response);
     }
 ]);
 ```
@@ -185,8 +187,8 @@ Também é possível definir uma rota padrão para qualquer erro:
 
 ```php
 $router->error('default', [
-    function($request, $response) {
-        return Errors\General::show(Request $request, Response $response);
+    function(Request $request, Response $response) {
+        return Errors\General::show($request, $response);
     }
 ]);
 ```
@@ -197,7 +199,7 @@ Para realizar um redirecionamento em alguma rota, utilize a função `redirect()
 
 ```php
 $router->get('/redirect', [
-    function($request, $response) {
+    function(Rquest $request, Response $response) {
         return $request->getRouter()->redirect('/destination');
     }
 ]);
@@ -210,7 +212,7 @@ Os middlewares fornecem um mecanismo conveniente para validar requisições em r
 ```php
 $router->get('/', [
     'middlewares' => [ 'maintenance' ],
-    function($request, $response) {
+    function(Request $request, Response $response) {
         // ...
     }
 ]);
@@ -221,8 +223,11 @@ A classe do Middleware deve conter a função `handle` que será executada ao ac
 ```php
 namespace App\Middlewares;
 
+use Luna\Http\Request;
+use Luna\Http\Response;
+
 class Maintenance {
-    public function handle($request, $response, $next) {
+    public function handle(Request $request, Response $response, $next) {
         // ...
 
         return $next($request, $response);
@@ -273,7 +278,7 @@ O armazenamento do retorno de rotas em cache reduz o tempo de retorno para futur
 ```php
 $router->get('/', [
     'cache' => 10000,
-    function($request, $response) {
+    function(Request $request, Response $response) {
         // ...
     }
 ]);
@@ -294,7 +299,7 @@ O valor de CACHE_TIME é definido como tempo de cache (também em milisegundos) 
 ```php
 $router->get('/', [
     'cache' => true,
-    function($request, $response) {
+    function(Request $request, Response $response) {
         // ...
     }
 ]);
@@ -384,7 +389,7 @@ namespace App\Services;
 
 class ProductService
 {
-    public static function find(int $id)
+    public static function find(int|string $id)
     {
         // ...
     }
@@ -833,7 +838,7 @@ use App\Models\Product;
 
 class ProductService
 {
-    public function find(int $id) {
+    public function find(int|string $id) {
         return Product::find($id);
     }
 

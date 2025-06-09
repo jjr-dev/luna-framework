@@ -46,7 +46,7 @@ class Cache
 
         $cacheTime = $request->getRouter()->getCacheTime();
 
-        return File::getCache($hash, $cacheTime, function() use($request, $response, $next) {
+        return File::getCache($hash, $cacheTime, function() use ($request, $response, $next) {
             return $next($request, $response);
         });
     }

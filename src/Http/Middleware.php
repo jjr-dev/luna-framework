@@ -32,7 +32,7 @@ class Middleware
         self::$default = $default;
     }
 
-    public function next($request, $response)
+    public function next(Request $request, Response $response)
     {
         if (empty($this->middlewares)) {
             return call_user_func_array($this->controller, $this->controllerArgs);
@@ -46,7 +46,7 @@ class Middleware
             
         $queue = $this;
         
-        $next = function($request, $response) use($queue) {
+        $next = function($request, $response) use ($queue) {
             return $queue->next($request, $response);
         };
 

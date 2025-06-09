@@ -86,7 +86,7 @@ class View
     {
         $pattern = '/\{\{(.*?)\}\}/s';
 
-        $output = preg_replace_callback($pattern, function ($matches) {
+        $output = preg_replace_callback($pattern, function($matches) {
             $block = rtrim(preg_replace('/\s+/', ' ', $matches[1]));
 
             if (substr($block, -2) === "??") $block .= " ";
@@ -107,11 +107,11 @@ class View
         if ($coalescences) {
             $coalescencesPreKeys = array_keys($coalescences);
 
-            $coalescencesKeys = array_map(function ($item) {
+            $coalescencesKeys = array_map(function($item) {
                 return '{{' . $item . '}}';
             }, $coalescencesPreKeys);
 
-            $coalescencesPreKeys = array_map(function ($item) use ($coalescences) {
+            $coalescencesPreKeys = array_map(function($item) use ($coalescences) {
                 return '{{' . $item . ' ?? ' . $coalescences[$item] . '}}';
             }, $coalescencesPreKeys);
 
@@ -126,7 +126,7 @@ class View
             array_merge(self::$vars, $vars)
         );
 
-        $keys = array_map(function ($item) {
+        $keys = array_map(function($item) {
             return '{{' . $item . '}}';
         }, array_keys($vars));
 

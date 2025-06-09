@@ -27,7 +27,7 @@ class Migrate {
             '{',
             '    public function up()',
             '    {',
-            '        Manager::schema()->create("' . $table . '", function (Blueprint $table) {',
+            '        Manager::schema()->create("' . $table . '", function(Blueprint $table) {',
             '            $table->id();',
             '        });',
             '    }',

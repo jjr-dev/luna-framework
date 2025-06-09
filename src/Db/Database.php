@@ -35,7 +35,7 @@ class Database
         $capsule->bootEloquent();
 
         if (!Manager::schema()->hasTable('migrations')) {
-            Manager::schema()->create('migrations', function (Blueprint $table) {
+            Manager::schema()->create('migrations', function(Blueprint $table) {
                 $table->increments('id');
                 $table->text('filename');
                 $table->integer('batch');
@@ -43,7 +43,7 @@ class Database
         }
 
         if (!Manager::schema()->hasTable('logs')) {
-            Manager::schema()->create('logs', function (Blueprint $table) {
+            Manager::schema()->create('logs', function(Blueprint $table) {
                 $table->id();
                 $table->string('public_id');
                 $table->text('message');
