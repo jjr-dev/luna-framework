@@ -9,7 +9,7 @@ class Response
     private array $headers = [];
     private int $httpCode;
     private string $contentType;
-    private string $content;
+    private string|array|null $content;
 
     public function send(int $httpCode, string|array|null $content = null, ?string $contentType = null)
     {
