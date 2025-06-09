@@ -97,7 +97,7 @@ class View
         return $output;
     }
 
-    public static function render(string $view, array $vars = [], string|bool $content = false): string
+    public static function render(string $view, array|object $vars = [], string|bool $content = false): string
     {
         $contentView = $content ?: self::getContentView($view);
         $contentView = self::removeNewlinesInsideBraces($contentView);

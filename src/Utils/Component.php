@@ -15,14 +15,14 @@ class Component
         return file_get_contents($file);
     }
     
-    public static function render(string $component, $vars = []): string
+    public static function render(string $component, array|object $vars = []): string
     {
         $contentComponent = self::getContentComponent($component);
         
         return View::render(false, $vars, $contentComponent);
     }
 
-    public static function multiRender(string $component, $vars = []): array|string
+    public static function multiRender(string $component, array|object $vars = []): array|string
     {
         $contentComponents = [];
 
