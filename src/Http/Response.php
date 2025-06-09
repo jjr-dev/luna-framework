@@ -11,7 +11,7 @@ class Response
     private string $contentType;
     private string $content;
 
-    public function send(int $httpCode, ?string $content = null, ?string $contentType = null)
+    public function send(int $httpCode, string|array|null $content = null, ?string $contentType = null)
     {
         $this->httpCode = $httpCode;
         $this->content = $content;
