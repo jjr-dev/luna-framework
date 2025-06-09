@@ -61,10 +61,12 @@ class Request
             return;
         }
 
-        $this->body = $_POST ?? [];
+        $body = $_POST ?? [];
 
         $inputRaw = file_get_contents('php://input');
-        $this->body = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->body;
+        $body = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $body;
+
+        $this->body = $body ?: [];
     }
 
     public function setPathParams(?array $pathParams): void
