@@ -15,7 +15,7 @@ class Component
         return file_get_contents($file);
     }
     
-    public static function render(string $component, array $vars = []): string
+    public static function render(string $component, $vars = []): string
     {
         $contentComponent = self::getContentComponent($component);
         
