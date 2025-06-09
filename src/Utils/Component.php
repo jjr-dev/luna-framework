@@ -22,7 +22,7 @@ class Component
         return View::render(false, $vars, $contentComponent);
     }
 
-    public static function multiRender(string $component, array $vars = []): array|string
+    public static function multiRender(string $component, $vars = []): array|string
     {
         $contentComponents = [];
 

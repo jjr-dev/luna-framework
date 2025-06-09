@@ -49,7 +49,7 @@ class Controller
         ));
     }
 
-    public static function success(array $data = [], int $code = 200)
+    public static function success(array|string $data = [], int $code = 200)
     {
         return [
             'data' => $data,
@@ -58,7 +58,7 @@ class Controller
         ];
     }
 
-    public static function error(array $data = [], int $code = 400)
+    public static function error(array|string $data = [], int $code = 400)
     {
         return [
             'data' => $data,
